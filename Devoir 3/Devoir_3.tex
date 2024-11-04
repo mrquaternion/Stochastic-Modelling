@@ -1,0 +1,563 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage[outputdir=build]{minted}
+\usepackage{fancyvrb}
+\usepackage[x11names]{xcolor}
+
+\definecolor{lightlightgray}{RGB}{242,242,242}
+
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\footnotesize,
+ frame=lines,  
+ framesep=2em, 
+ rulecolor=\color{gray},
+ label=\fbox{\color{black}output},
+ labelposition=topline,
+ commandchars=\|\(\), % escape character and argument delimiters for
+                      % commands within the verbatim
+ commentchar=*        % comment character
+}
+
+\title{Devoir 3}
+\author{Mathias La Rochelle}
+\date{Le lundi 30 septembre 2024}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problème 1}
+\subsection*{Partie A}
+% Content for Partie A
+    \textbf{Énoncé}. Montrer par induction que si \(0 < p < 1\),
+    \[
+        \boldsymbol{P} = \begin{pmatrix}
+            p & 1 - p \\
+            1 - p & p
+        \end{pmatrix},
+    \]
+
+    \noindent et \(r = 2p - 1\), alors
+    \[
+        \boldsymbol{P^n} = \frac{1}{2} \begin{pmatrix}
+            1 + r^n & 1 - r^n \\
+            1 - r^n & 1 + r^n
+        \end{pmatrix}.
+    \]
+
+    \vspace{.5cm}
+    \hrule
+    \vspace{.5cm}
+
+    Pour résoudre notre problème, nous allons procéder par preuve d'induction. Voici les étaps que nous allons suivre :
+    \begin{itemize}
+        \item Hypothèse d'induction
+        \item Cas spécial
+        \item Cas de base
+        \item Hérédité
+    \end{itemize}
+
+    \vspace{.3cm}
+    \noindent Commençons, \\
+
+    Notre hypothèse d'induction est la suivante :
+    \[
+        \boldsymbol{P}^n = \frac{1}{2} \begin{pmatrix}
+            1 + r^n & 1 - r^n \\
+            1 - r^n & 1 + r^n
+        \end{pmatrix}
+    \]
+
+    À partir de cette matrice, nous trouvons notre cas spécial où \(n = 0\) :
+    \[
+        \boldsymbol{P}^0 = \frac{1}{2} \begin{pmatrix}
+            1 + 1 & 1 - 1 \\
+            1 - 1 & 1 + 1
+        \end{pmatrix} 
+        = 
+        \frac{1}{2} \begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}
+        = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+        = \boldsymbol{I}_{2 \times 2}
+    \]
+
+    \newpage
+    L'égalité semble toute a fait logique. On a une probabilité de 1 étant donné que l'on fait \(n = 0\) transitions à l'extérieur de l'état initial. \\
+
+    \textbf{Cas de base} (\(n = 1\)) :
+
+    \vspace{.1cm}
+    Pour \(n = 1\), nous devons montrer que :
+    \[
+        \boldsymbol{P}^1 = \frac{1}{2} \begin{pmatrix}
+            1 + r & 1 - r \\
+            1 - r & 1 + r
+        \end{pmatrix}
+    \]
+
+    On se souvient que \(r = 2p - 1\) et que
+    \[
+        \boldsymbol{P} = \begin{pmatrix}
+            p & 1 - p \\
+            1 - p & p
+        \end{pmatrix}
+    \]
+
+    Alors on a que \(p = \frac{1}{2} (r + 1)\) et que
+    \[
+        \boldsymbol{P} = \begin{pmatrix}
+        \frac{1}{2} (r + 1) & 1 - \frac{1}{2} (r + 1) \\
+        1 - \frac{1}{2} (r + 1) & \frac{1}{2} (r + 1)
+        \end{pmatrix}
+        =
+        \frac{1}{2} \begin{pmatrix} 1 + r & 1 - r \\ 1 - r & 1 + r \end{pmatrix}
+    \]
+
+    On retrouve notre matrice $\boldsymbol{P}^1$ qui est égale à $\boldsymbol{P}$.
+
+    \vspace{.3cm}
+    Désormais, supposons que la formule de notre hypothèse d'induction est vraie \(\forall n \in \mathbb{N}\). Démontrons qu'elle est également vraie pour \(n + 1\). \\
+
+    \textbf{Hérédité} :
+
+    \vspace{.1cm}
+    Soit \(\boldsymbol{P}^{n + 1} = \boldsymbol{P}^n \times \boldsymbol{P}^1\), on a que
+    \begin{align}
+        \boldsymbol{P}^{n + 1} &= \left( \frac{1}{2} \cdot \begin{pmatrix}
+            1 + r^n & 1 - r^n \\
+            1 - r^n & 1 + r^n
+        \end{pmatrix} \right)
+        \times
+        \left( \frac{1}{2} \cdot \begin{pmatrix}
+            1 + r & 1 - r \\ 
+            1 - r & 1 + r
+        \end{pmatrix} \right) \notag \\ &= 
+        \frac{1}{4} \begin{pmatrix}
+            (1+r^n)(1+r) + (1-r^n)(1-r) & (1+r^n)(1-r) + (1-r^n)(1+r) \\
+            (1-r^n)(1+r) + (1+r^n)(1-r) & (1-r^n)(1-r) + (1+r^n)(1+r)
+        \end{pmatrix} \notag
+    \end{align}
+
+    Ici, on s'aperçoit qu'on a 2 cas de figures :
+
+    \vspace{.2cm}
+    \textit{Cas de figure 1}
+    \begin{align}
+        (1 + r^n) \cdot (1 + r) + (1 - r^n) \cdot (1 - r) &= 1 + r + r^n + r^{n + 1} + 1 + r + r^n + r^{n + 1} \notag \\
+        &= 2 + 2r^{n + 1} \notag
+    \end{align}
+
+    \vspace{-.2cm}
+    \textit{Cas de figure 2}
+    \begin{align}
+        (1 - r^n) \cdot (1 + r) + (1 + r^n) \cdot (1 - r) &= 1 + r - r^n - r^{n + 1} + 1 - r + r^n - r^{n + 1} \notag \\
+        &= 2 - 2r^{n + 1} \notag
+    \end{align}
+
+    \vspace{-.1cm}
+    Donc,
+    \[
+        \boldsymbol{P}^{n + 1} = \frac{1}{4} \begin{pmatrix}
+            2 + 2r^{n + 1} & 2 - 2r^{n + 1} \\
+            2 - 2r^{n + 1} & 2 + 2r^{n + 1}
+        \end{pmatrix}
+        = \frac{1}{2} \begin{pmatrix}
+            1 + r^{n + 1} & 1 - r^{n + 1} \\
+            1 - r^{n + 1} & 1 + r^{n + 1}
+        \end{pmatrix}
+    \]
+    
+    Ce qui correspond exactement à la forme attendue de $\boldsymbol{P}$ à la transition \(n + 1\). Grâce à cette hérédité, on a finalisé la preuve par induction de $\boldsymbol{P}^n$. La formulaire est vraie \(\forall n\in\mathbb{N}\). \ $\square$
+
+\subsection*{Partie B}
+% Content for Partie B
+    \textbf{Énoncé}. Si une chaîne ayant cette matrice de transition débute dans l'état \(X_0 = 0\), quelle est la probabilité qu'elle soit dans l'état 0 après $n$ étapes ? Cette probabilité converge vers 1/2 à quelle vitesse ? En d'autres mots, quel est l'ordre de complexité de \(\lvert \mathbb{P}[X_n = 0] - 1/2 \rvert\) ?
+
+    \vspace{.5cm}
+    \hrule
+    \vspace{.5cm}
+
+    La probabilité que notre chaîne soit dans l'état 0 après $n$ étapes sachant qu'elle a débuté à l'état 0 peut être réecrite de la manière suivante :
+    \begin{align}
+        \boldsymbol{P}^{(n)}_{0,0} &= \mathbb{P}[X_n = 0 \mid X_0 = 0] \notag \\
+        &= \frac{1}{2} (1 + r^n) = \frac{1}{2} \left(1 + (2p - 1)^n\right) \notag
+    \end{align}
+
+    Pour montrer que cette probabilité converge vers 1/2, nous pouvons utiliser la condition initiale que \(0 < p < 1\) :
+    \[
+        \lim_{n\to\infty} \boldsymbol{P}^{(n)}_{0,0} = \lim_{n\to\infty} \frac{1}{2} \left(1 + (2p - 1)^n\right) = \lim_{n\to\infty} \frac{1}{2} (1 + 0) = \frac{1}{2}
+    \]
+    
+    étant donné que \(\lvert 2p - 1 \rvert < 1\) et que \((2p - 1)^n \to 0\) pour \(n\to\infty\). \\
+    
+    Donc la vitesse de convergence de \(\mathbb{P}[X_n = 0]\) est de
+    \[
+        \Big\lvert \mathbb{P}[X_n = 0] - \frac{1}{2} \Big\rvert = \Big\lvert \frac{1}{2} (1 + r^n) - \frac{1}{2} \Big\rvert = \frac{1}{2} \lvert r^n \rvert 
+    \]
+
+    La probabilité converge vers $1/2$ en un temps exponentiel.
+
+\section*{Problème 2}
+% Content for Problème 2
+    \textbf{Énoncé}. Pour une marche aléatoire sur les entiers comme à la page 19 de mes diapos, l'état $X_n$ à l'étape $n$ sera \(\sum^n_{i = 1} Y_i\) où les $Y_i$ sont i.i.d. \(\mathbb{P}[Y_i = 1] = p\) et \(\mathbb{P}[Y_i = -1] = 1 - p\). Utilisez la loi forte des grands nombres pour montrer que si $p >$ 1/2, alors \(X_n = \sum^n_{i = 1} Y_i \to\infty\) avec probabilité 1 lorsque \(n\to\infty\). Idem pour $p <$ 1/2. Cela donne une autre façon de montrer que la chaîne est nécessairement transitoire quand $p \neq$ 1/2.
+
+    \vspace{.5cm}
+    \hrule
+    \vspace{.5cm}
+
+    Afin de montrer que la marche aléatoire tend vers l'infini positif ou négatif selon la valeur de $p$, nous allons utiliser la loi forte des grandes nombres. Tout d'abord, nous savons que
+    \begin{gather}
+        \mathbb{P}[Y_i = 1] = p \notag \\
+        \mathbb{P}[Y_i = -1] = 1 - p \notag \\
+        X_n = \sum^n_{i = 1} Y_i \notag
+    \end{gather}
+
+    L'espérance des variables i.i.d. $Y_i$ est la suivante :
+    \[
+        \mathbb{E}[Y_i] = \sum^2_{j = 1} y_j \cdot \mathbb{P}[Y_j = y_j] = 1 \cdot p + (-1) \cdot (1 - p) = 2p - 1
+    \]
+
+    Selon la loi forte des grands nombres, on a que
+    \[
+        \frac{1}{n} \sum^n_{i = 1} Y_i \stackrel{w.p.1}{\to} 2p - 1
+    \]
+
+    On retrouve facilement l'expression de $X_n$ en multipliant les 2 côtés par \textbf{n} :
+    \[
+        X_n = \sum^n_{i = 1} Y_i \stackrel{w.p.1}{\to} n \cdot (2p - 1)
+    \]
+
+    Analyse des valeurs que $p$ peut prendre :
+    \begin{enumerate}[label=\alph*), left=.8cm]
+        \item Si \(p > 1/2\), alors \(2p - 1 > 0\) et donc \(X_n \stackrel{w.p.1}{\to} \infty\) quand \(n\to\infty\)
+        \item Si \(p < 1/2\), alors \(2p - 1 < 0\) et donc \(X_n \stackrel{w.p.1}{\to} -\infty\) quand \(n\to\infty\)
+    \end{enumerate}
+
+    \vspace{.2cm}
+    Cette analyse nous permet de conclure que la chaîne est nécessairement transitoire lorsque $p \neq \frac{1}{2}$. En effet, dans ces cas, la marche aléatoire s'éloigne indéfiniment de son point de départ, ne revenant jamais à son état initial avec une probabilité 1.
+
+\section*{Problème 3}
+% Content for Problème 3
+    \textbf{Énoncé}. Une matrice de transition $\boldsymbol{P}$ est dite \textit{doublement stochastique} si la somme des éléments sur chaque colonne est aussi égale à 1. Pour une telle matrice, on a donc
+    \[
+        \sum_i \boldsymbol{P}_{i,j} = 1\ \text{pour tout } j\ \text{et}\ \sum_j \boldsymbol{P}_{i,j} = 1\ \text{pour tout } i.
+    \]  
+
+    \vspace{-.15cm}
+    \noindent Soit une chaîne irréductible à \(M + 1\) états \(\{0,1,...,M\}\) et une matrice de probabilités de transition $\boldsymbol{P}$. Montrez que si $\boldsymbol{P}$ est doublement stochastique, alors \(\pi_i =\) 1/$(M + 1)$ pour tout $i$.
+
+    \vspace{.5cm}
+    \hrule
+    \vspace{.5cm}
+
+    \noindent Pour prouver que si $\boldsymbol{P}$ est doublement stochastique, alors \(\pi_i =\) 1/$(M + 1)$ pour tout $i$, nous allons procéder en plusieurs étapes : \\
+
+    1. Rappelons que pour une chaîne de Markov irréductible, le vecteur de probabilités stationnaires $\boldsymbol{\pi}$ satisfait :
+    \[
+        \pi_j = \sum_{i\in\raisebox{0.4ex}{\normalsize $\chi$}} \pi_i P_{i,j},\, \forall j\in\raisebox{0.4ex}{\large $\chi$}\ \text{et}\ \sum_{i\in\raisebox{0.4ex}{\normalsize $\chi$}} \pi_i = 1
+    \]
+    
+    2. Supposons que \(\pi_i =\) 1/$(M + 1)$ pour tout $i$. Nous allons vérifier que cette distribution satisfait les équations d'équilibre. \\
+
+    3. Pour tout $j$, nous avons :
+    \[
+       \pi_j = \sum_i \pi_i P_{i,j} = \sum_i \frac{1}{M + 1} P_{i,j} = \frac{1}{M + 1} \sum_i P_{i,j}
+    \]
+
+    4. Comme $\boldsymbol{P}$ est doublement stochastique, nous savons que \(\sum_i P_{i,j} = 1\) pour tout $j$.
+
+    \vspace{.2cm}
+    Donc,
+    \[
+        \pi_j = \frac{1}{M + 1} \sum_i P_{i,j} = \frac{1}{M + 1} \cdot 1 = \frac{1}{M + 1}
+    \]
+
+    5. Grâce au résultat obtenu, on peut confirmer que la somme des probabilités d'atteindre l'état $i$ à long terme est
+    \[
+        \sum_i \pi_i = \sum_i \frac{1}{M + 1} = (M + 1) \cdot \frac{1}{M + 1} = 1
+    \]
+
+    6. Nous venons de démontrer que la loi d'équilibre est satisfaite avec les équations d'équilibre \(\boldsymbol{\pi}\boldsymbol{P} = \boldsymbol{\pi}\) et \(\boldsymbol{\pi}\boldsymbol{1}^t = 1\). \\
+
+    \noindent La distribution stationnaire de notre chaîne de Markov irréductible à $M + 1$ états possède une solution unique de \(\pi_i =\) 1/$(M + 1)$ pour tout $i$. \ $\square$
+
+\section*{Problème 4}
+% Content for Problème 4    
+    \textbf{Énoncé}. On lance un dé plusieurs fois successivement, et soit $Y_n$ la somme des valeurs des $n$ premiers tirs. On vous demande de trouver
+    \[
+        \lim_{n\to\infty} \mathbb{P}[Y_n\ \text{est un multiple de 13}].
+    \]
+    
+    Pour cela, on peut définir une chaîne dont l'état à l'étape $n$ est \(X_n = Y_n \mod 13\), puis trouver les probabilités limites $\pi_i$ pour cette chaîne. Suggestion : pensez à exploiter le résultat de la question précédente.
+
+    \vspace{.5cm}
+    \hrule
+    \vspace{.5cm}
+
+    Il y a 2 manières de résoudre ce problème. Expliquons d'abord ce qui se passe et ensuite nous allons montrer les 2 façons de trouver
+    \[
+        \lim_{n\to\infty} \mathbb{P}[Y_n\ \text{est un multiple de 13}]
+    \]
+
+    \textbf{Modélisation de la chaîne de Markov} :
+    \begin{itemize}[left=1cm]
+        \item L'état $X_n$ représente le reste de la division de $Y_n$ par 13.
+        \item Les états possibles sont $\{0, 1, 2, ..., 12\}$.
+        \item La transition d'un état à l'autre dépend du résultat du lancer de dé.
+    \end{itemize}
+
+    \textbf{Matrice de transition} :
+    \begin{itemize}[left=1cm]
+        \item Pour chaque état $i$, il y a 6 transitions possibles correspondant aux 6 faces du dé.
+        \item La probabilité de transition de l'état $i$ à l'état $j$ est :
+        \[ P_{i,j} = \frac{1}{6} \text{ si } j = (i + k)\hspace{-.3cm} \mod 13, \text{ où } k \in \{1,2,3,4,5,6\} \]
+        \item Cette matrice est doublement stochastique car chaque ligne et chaque colonne somme à 1.
+    \end{itemize} 
+
+    \vspace{.4cm}
+    {\large \textbf{Première manière}} 
+
+        \vspace{.3cm}
+        \textbf{Application du résultat du problème 3} :
+
+            \vspace{.2cm}
+            La matrice de transition étant doublement stochastique et la chaîne étant irréductible (on peut atteindre n'importe quel état à partir de n'importe quel autre état), nous pouvons appliquer le résultat du problème 3.
+
+            \vspace{.2cm}
+            Donc, les probabilités stationnaires sont uniformes : $\pi_i = \frac{1}{13}$ pour tout $i \in \{0, 1, ..., 12\}$. \\
+
+        \textbf{Interprétation du résultat} :
+            
+            \vspace{.2cm}
+            La probabilité limite que $Y_n$ soit un multiple de 13 est égale à $\pi_0 = \frac{1}{13}$. Cela signifie qu'à long terme, environ 1 lancer sur 13 donnera une somme qui est un multiple de 13. 
+
+    \vspace{.5cm}
+    {\large \textbf{Deuxième manière}}
+
+    \vspace{.3cm}
+    Afin de ne pas se casser la tête, nous allons construire la matrice de transitions de notre chaîne de Markove et résoudre le système d'équations numériquement. Voici une description détaillée de l'approche numérique utilisée :
+
+    \begin{enumerate}
+        \item \textbf{Création de la matrice de transition} :
+        Nous utilisons une boucle pour créer la matrice de transition 13x13, où chaque élément représente la probabilité de passer d'un état à un autre.
+
+        \item \textbf{Résolution du système d'équations} :
+        Au lieu de résoudre les équations d'équilibre manuellement, nous utilisons une méthode numérique basée sur l'algèbre linéaire.
+
+        \item \textbf{Formulation du problème} :
+        Nous transformons le système d'équations $\pi P = \pi$ en $(P^T - I)\pi = 0$, où $P^T$ est la transposée de $P$ et $I$ est la matrice identité.
+
+        \item \textbf{Ajout de la contrainte de somme} :
+        Nous ajoutons une ligne à la matrice et au vecteur de résultats pour imposer la contrainte $\sum_i \pi_i = 1$.
+
+        \item \textbf{Résolution} :
+        Nous utilisons la fonction \texttt{Solve} de la bibliothèque \texttt{matlib} pour résoudre le système linéaire et obtenir les valeurs de $\pi_i$.
+    \end{enumerate}
+
+    Nous avons \(p_{i,j} = 1/6\) pour tous les $i$ et $j$ où $p_{i,j}$ est défini :
+    \[
+        \boldsymbol{P} = \left(
+        \begingroup
+        \renewcommand{\arraystretch}{1.2}
+        \setlength{\arraycolsep}{2pt}
+        \small
+        \begin{array}{*{13}{c}}
+            0 & p_{0,1} & p_{0,2} & p_{0,3} & p_{0,4} & p_{0,5} & p_{0,6} & 0 & 0 & 0 & 0 & 0 & 0 \\
+            0 & 0 & p_{1,2} & p_{1,3} & p_{1,4} & p_{1,5} & p_{1,6} & p_{1,7} & 0 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 0 & p_{2,3} & p_{2,4} & p_{2,5} & p_{2,6} & p_{2,7} & p_{2,8} & 0 & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & p_{3,4} & p_{3,5} & p_{3,6} & p_{3,7} & p_{3,8} & p_{3,9} & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & 0 & p_{4,5} & p_{4,6} & p_{4,7} & p_{4,8} & p_{4,9} & p_{4,10} & 0 & 0 \\
+            0 & 0 & 0 & 0 & 0 & 0 & p_{5,6} & p_{5,7} & p_{5,8} & p_{5,9} & p_{5,10} & p_{5,11} & 0 \\
+            0 & 0 & 0 & 0 & 0 & 0 & 0 & p_{6,7} & p_{6,8} & p_{6,9} & p_{6,10} & p_{6,11} & p_{6,12} \\
+            p_{7,0} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & p_{7,8} & p_{7,9} & p_{7,10} & p_{7,11} & p_{7,12} \\
+            p_{8,0} & p_{8,1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & p_{8,9} & p_{8,10} & p_{8,11} & p_{8,12} \\
+            p_{9,0} & p_{9,1} & p_{9,2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & p_{9,10} & p_{9,11} & p_{9,12} \\
+            p_{10,0} & p_{10,1} & p_{10,2} & p_{10,3} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & p_{10,11} & p_{10,12} \\
+            p_{11,0} & p_{11,1} & p_{11,2} & p_{11,3} & p_{11,4} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & p_{11,12} \\
+            p_{12,0} & p_{12,1} & p_{12,2} & p_{12,3} & p_{12,4} & p_{12,5} & 0 & 0 & 0 & 0 & 0 & 0 & 0
+        \end{array}
+        \endgroup
+        \right)
+    \] 
+
+    Les équations d'équilibre lors de la multiplication matricielle \(\boldsymbol{\pi}\boldsymbol{P} = \boldsymbol{\pi}\) sont définies par le système suivant :
+    \[
+        \pi_j = \sum^{12}_{i=0} \pi_i \cdot P_{i,j},\, \text{pour tout $j$}
+    \]
+    
+    Voici le code R utilisé pour cette résolution numérique :
+    \begin{minted}[bgcolor=lightlightgray, fontsize=\footnotesize, linenos]{r}
+  library(matlib)
+
+  matriceTransition <- matrix(0, nrow=13, ncol=13)
+
+  for (i in 0:12) {
+    for (k in 1:6) {
+      j <- (i + k) %% 13
+      matriceTransition[i + 1, j + 1] <- 1/6
+    }
+  }
+
+  identiteDeMatriceTransition <- diag(nrow(matriceTransition))
+
+  A <- t(matriceTransition) - identiteDeMatriceTransition
+  b <- matrix(0, nrow=13, ncol=1) 
+
+  A <- rbind(A, rep(1, 13))
+  b <- rbind(b, 1)
+
+  Solve(A, b, fractions = TRUE)
+    \end{minted}
+
+    Le résultat de ce calcul numérique est le suivant :
+    \VerbatimInput{R/project/output.txt} 
+
+    \vspace{.2cm}
+    Cette approche numérique confirme notre résultat théorique : chaque état a une probabilité limite de 1/13. Donc la probabilité que $Y_n$ soit un multiple de 13 c'est quand \(X_n = Y_n \mod 13 \equiv 0\) soit la probabilité stationnaire $\pi_0 = 1/13$. Cette méthode valide la première approche que nous avons fait plus tôt sur la double stochasticité de $\boldsymbol{P}$.
+
+\section*{Problème 5}
+% Content for Problème 5
+    \textbf{Énoncé}. Birgit part de chez elle (au Kenya) chaque matin pour faire son entraînement de course pour le marathon. Elle sort par la porte de devant avec une probabilité 1/2 et par derrière avec probabilité 1/2. Elle choisit au hasard une paire de souliers qui se trouve près de la porte d'où elle sort s'il y en a, et elle part nu-pieds s'il n'y a pas de souliers près de cette porte. Au retour, elle choisit aussi chaque porte avec probabilité 1/2 et laisse ses souliers près de cette porte. Si elle possède $k$ paires de souliers au total, quelle est la proportion des jours où elle va courir nu-pieds, à long terme ? \\
+
+    \noindent Suggestion : modélisez cette situation par une chaîne de Markov et trouvez les probabilités limites. Qui sait, vous allez peut-être pouvoir encore exploiter le résultat de la question 3.
+
+    \vspace{.5cm}
+    \hrule
+    \vspace{.5cm}
+
+    Avant de modéliser notre matrice de transition $\boldsymbol{P}_C$, nous devons trouver le nombre d'états faisant parti de notre chaîne de Markov. Lorsque Birgit sort d'une porte $m$, il y a $k + 1$ possibilités qui s'offrent à elle. Il peut y avoir 0, 1, 2 ou même $k$ paires de souliers à une porte quelconque. Donc, on a \(k + 1\) états dans notre chaîne de Markov $C$. \\
+    
+    La chaîne de Markov décrivant le problème est la suivante :
+    %\[
+    %   C = \{X_{m,n} \mid n \in \{0, 1, ..., k\},\, m \in \{F,B\}\}
+    %\]
+    \[
+       C = \{X_n \mid n \in \{0, 1, ..., k\}\}
+    \]
+    
+    \hspace{.5cm} où $n$ est le nombre de paires de souliers à une porte quelconque. \\
+
+    Lorsque Birgit s'apprête à sortir dehors, il y 4 scénarios qui peuvent se dérouler et ce, peu importe le nombre $n$ de souliers à une certaine porte :
+    \begin{enumerate}
+        \item Elle sort par la porte avant et rentre par la porte avant $P_{F,F} = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$
+        \item Elle sort par la porte avant et rentre par la porte arrière $P_{F,B} = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$
+        \item Elle sort par la porte arrière et rentre par la porte avant $P_{B,F} = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$
+        \item Elle sort par la porte arrière et rentre par la porte arrière $P_{B,B} = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$
+    \end{enumerate}
+    
+    Pour un état $j$ quelconque, où $j$ est le nombre de paires de souliers à la porte A, décrivons les événements qui font en sorte que Birgit restera dans l'état $j$.
+    
+    \vspace{.2cm}
+    \textbf{Premier scénario} avec $j = 0$ au départ :
+    \begin{enumerate}[left=1cm]
+        \item Birgit sort de la porte A, où il y a 0 paire, et rentre par la porte A. Elle reste donc dans l'état $j = 0$ avec probabilité $1/2 \cdot 1/2 = 1/4$.
+        \item Birgit sort de la porte A, où il y a 0 paire, et rentre par la porte B. Elle reste donc dans l'état $j = 0$ (toujours 0 paire à la porte A) avec probabilité $1/2 \cdot 1/2 = 1/4$.
+        \item Birgit sort de la porte B, où il y a $k$ paires, et rentre par la porte B. Elle reste donc dans l'état $j = 0$ (même chose qu'en 2.) avec probabilité $1/2 \cdot 1/2 = 1/4$.
+    \end{enumerate}
+
+    Au final, il y a une probabilité \(3 \cdot 1/4 = 3/4\) que Birgit reste dans l'état $j = 0$ à partir de l'état $j = 0$. 
+    
+    \vspace{.2cm}
+    Mais qu'elle est la probabilité qu'elle passe à l'état $j = 1$ ? Si Birgit sort de la porte B, où il y a $k$ paires, et rentre par la porte A, alors il y aura maintenant 1 paire à la porte A et donc elle aura transitionnée 
+    à l'état $j= 1$ avec probabilité \(1/2 \cdot 1/2 = 1/4\). Aussi, on se passe des détails mais cela va de même pour l'état $j = k$ et ce, par symmétrie.
+
+    \vspace{.2cm}
+    \textbf{Deuxième scénario} avec $j = 1$ au départ :
+    \begin{enumerate}[left=1cm]
+        \item Birgit sort de la porte A, où il y a 1 paire, et rentre par la porte A. Elle reste donc dans l'état $j = 1$ avec probabilité $1/2 \cdot 1/2 = 1/4$.
+        \item Birgit sort de la porte A, où il y a 1 paire, et rentre par la porte B. Elle passe à l'état $j = 0$ parce qu'il n'y a plus de paire à la porte A et ce, avec probabilité $1/2 \cdot 1/2 = 1/4$.
+        \item Birgit sort de la porte B, où il y a $k - 1$ paires, et rentre par la porte A. Elle passe à $j = 2$ en apportant une nouvelle paire à la porte A et ce, avec probabilité $1/2 \cdot 1/2 = 1/4$.
+        \item Birgit sort de la porte B, où il y a $k - 1$ paires, et rentre par la porte B. Elle reste donc dans l'état $j = 1$ (toujours 1 paire à la porte A) avec probabilité $1/2 \cdot 1/2 = 1/4$.
+    \end{enumerate}
+
+    Au final, il y a une probabilité \(2 \cdot 1/4 = 1/2\) que Birgit reste dans l'état $j = 1$. Elle passera à l'état inférieur ou supérieur le 1/4 du temps. On peut généraliser ce scénario pour chaque état $j = i,\, 0 < i < k$, encore à cause de raison symmétrique. \\
+
+    Simplifions le tout :
+    \begin{itemize}[left=1cm]
+        \item Les états aux frontières de notre système, soit l'état $s_0$ et l'état $s_k$, ont les transitions suivantes \(\rightarrow t_{0,0} = t_{k,k} = 3/4,\, t_{0,1} = t_{k-1, k} = 1/4 \)
+        \item Les états intermédiaires $s_i$ pour \(i\in\{1,2,...,k-1\}\) ont les transitions suivantes \(\rightarrow t_{i-1,i} = t_{i, i+1} = 1/4,\, t_{i,i} = 1/2\)
+    \end{itemize}
+
+    \vspace{.2cm}
+    Notre matrice de transitions $\boldsymbol{P}_C$ est alors 
+    \[
+        \boldsymbol{P}_C = \begin{pmatrix} 
+            \frac{3}{4} & \frac{1}{4} & 0 & 0 & \cdots & 0 \\[.5ex]
+            \frac{1}{4} & \frac{1}{2} & \frac{1}{4} & 0 & \cdots & 0 \\[.5ex] 
+            0 & \frac{1}{4} & \frac{1}{2} & \frac{1}{4} & \cdots & 0 \\[.5ex] 
+            \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\[.5ex] 
+             0 & 0 & 0 & \frac{1}{4} & \frac{1}{2} & \frac{1}{4} \\[.5ex] 
+             0 & 0 & 0 & 0 & \frac{1}{4} & \frac{3}{4}
+        \end{pmatrix}
+    \]
+
+    \vspace{.3cm}
+    Étant donné notre chaîne irréductible, on peut développer le produit matricielle des équations d'équilibres ainsi :
+
+    \vspace{.2cm}
+    Soit,
+    \begin{gather}
+        \boldsymbol{\pi}\boldsymbol{P}_C = \begin{pmatrix}
+            \pi_0 & \pi_1 & \cdots & \pi_k
+        \end{pmatrix}
+        \times
+        \begin{pmatrix}
+            \frac{3}{4} & \frac{1}{4} & 0 & 0 & \cdots & 0 \\[.5ex]
+            \frac{1}{4} & \frac{1}{2} & \frac{1}{4} & 0 & \cdots & 0 \\[.5ex] 
+            0 & \frac{1}{4} & \frac{1}{2} & \frac{1}{4} & \cdots & 0 \\[.5ex] 
+            \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\[.5ex] 
+             0 & 0 & 0 & \frac{1}{4} & \frac{1}{2} & \frac{1}{4} \\[.5ex] 
+             0 & 0 & 0 & 0 & \frac{1}{4} & \frac{3}{4}
+        \end{pmatrix}_{k+1,\, k+1} \notag \\ \boldsymbol{\pi}\boldsymbol{1}^t = \begin{pmatrix}
+            \pi_0 & \pi_1 & \cdots & \pi_k
+        \end{pmatrix}
+        \times
+        \begin{pmatrix}
+            1 \\
+            1 \\
+            \vdots \\
+            1
+        \end{pmatrix}_{1,\, k+1} \notag
+    \end{gather}
+
+   
+    Donc,
+    \begin{align}
+        &\pi_0 = \frac{3}{4}\pi_0 + \frac{1}{4}\pi_1 \\
+        &\pi_i = \frac{1}{4}\pi_{i-1} + \frac{1}{2}\pi_i + \frac{1}{4}\pi_{i+1} \\
+        &\pi_k = \frac{1}{4}\pi_{k-1} + \frac{3}{4}\pi_k \\
+        &\pi_0 + \pi_1 + \cdots + \pi_k = 1 
+    \end{align}
+
+    \vspace{.2cm}
+    Et donc nous nous retrouvons avec les égalités suivantes
+    \begin{gather}
+        \pi_0 = \frac{3}{4}\pi_0 + \frac{1}{4}\pi_1 \to \pi_0 = \pi_1 \notag \\
+        \pi_i = \frac{1}{4}\pi_{i-1} + \frac{1}{2}\pi_i + \frac{1}{4}\pi_{i+1} \to 2\pi_i = \pi_{i-1} + \pi_{i+1} \notag \\
+        \pi_k = \frac{1}{4}\pi_{k-1} + \frac{3}{4}\pi_k \to \pi_k = \pi_{k-1} \notag 
+    \end{gather}
+
+    À travers ces 3 équations, nous voyons bien que le système nous indique que la distribution à travers chaque état est la même :
+    \[
+        \pi_0 = \pi_1 = \cdots = \pi_k
+    \]
+
+    On se souvient que la somme des probabilités stationnaires doit être égale à 1, ce qui est une propriété fondamentale des distributions de probabilités et qui dans notre cas, donne le suivant :
+    \[
+        \underbrace{\sum^k_{i=0} \pi_i = (k + 1) \cdot \pi_i = 1}_{\text{puisque les états sont tous égaux}} \rightarrow\ \pi_i = \frac{1}{k + 1},\, \text{pour tout } i \notag
+    \] \\
+
+    Aussi, nous aurions pu terminer le problème plutôt en déclarant qu'il était possible de réduire ce problème à celui de la question 3 étant donné la propriété de double stochasticité de la matrice $\boldsymbol{P}_C$ ; alors pour une matrice à $k + 1$ états nous avons une solution unique pour notre distribution stationnaire de la chaîne de Markov $C$. \\
+
+    Au final, la proportion des jours où Birgit va courir nu-pieds à long terme est égale à 
+    \[
+        \pi_{0_A} = \frac{1}{2} \cdot \frac{1}{k+1} = \frac{1}{2k+2}\ \text{et}\ \pi_{k_B} = \frac{1}{2} \cdot \frac{1}{k+1} = \frac{1}{2k+2}
+    \]
+    
+    \hspace{.5cm} où $\pi_{0_A}$ est la probabilité qu'elle va courrir pied nu en passant par la porte A et $\pi_{k_B}$ est la même probabilité mais en passant par la porte B \\
+
+    Donc la proportion finale des jours où Birgit va courir nu-pieds à long terme est \(\pi_{0_A} + \pi_{k_B} = 2/(2k+2) = 1/(k+1)\). 
+\end{document}

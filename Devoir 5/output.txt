@@ -1,0 +1,3 @@
+Nombre de configurations admissibles pour un 3-coloriage dans G : 24 sur 243 configurations.
+Nombre de configurations admissibles pour un 4-coloriage dans G : 216 sur 1024 configurations.
+Nombre de configurations admissibles pour un 5-coloriage dans G : 960 sur 3125 configurations.

@@ -1,0 +1,339 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\allowdisplaybreaks
+\usepackage{minted}
+\usepackage{fancyvrb}
+\usepackage[x11names]{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+
+\definecolor{lightlightgray}{RGB}{242,242,242}
+
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\footnotesize,
+ frame=lines,  
+ framesep=2em, 
+ rulecolor=\color{gray},
+ label=\fbox{\color{black}output},
+ labelposition=topline,
+ commandchars=\|\(\), % escape character and argument delimiters for
+                      % commands within the verbatim
+ commentchar=*        % comment character
+}
+
+\title{Devoir 2 - IFT3655}
+\author{Mathias La Rochelle}
+\date{Le lundi 23 septembre 2024}
+
+\begin{document}
+	\maketitle
+	\textbf{Question 1 :}
+
+	\vspace{.2cm}
+	\textbf{(a)} Montrez que si \(X \sim \text{Normale}(\mu,\, \sigma^2)\), alors la fonction génératrice des moments de $X$ est \(M_X(t) = \text{exp}[\mu t + \sigma^2 t^2/2]\).
+	\begin{align}
+		M_X(t) = \mathbb{E}[e^{tX}] &= \int_{-\infty}^\infty \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2} (\frac{x - \mu}{\sigma})^2} \cdot e^{tx}\, dx \notag \\
+		&= \int_{-\infty}^\infty \frac{1}{\sigma\sqrt{2\pi}} e^{tx - \frac{1}{2\sigma^2} (x - \mu)^2}\, dx \notag \\
+		&= \int_{-\infty}^\infty \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2\sigma^2} \big(-2tx\sigma^2 + (x - \mu)^2\big)}\, dx \notag
+	\end{align}
+
+	On s'aperçoit qu'il y a une équation polynomiale de second degré entre les grandes parenthèses. Simplifions cette expression grâce à la méthode de complétion du carré :
+	\begin{align}
+		-2tx\sigma^2 + (x - \mu)^2 &= 0 \notag \\
+		-2tx\sigma^2 + x^2 -2\mu x + \mu^2 &= 0 \notag \\
+		x^2 - 2t\sigma^2 x - 2\mu x &= -\mu^2 \notag \\
+		x^2 + 2(-\sigma^2 t - \mu)x &= -\mu^2 \notag \\
+		x^2 + 2(-\sigma^2 t - \mu)x + (-\sigma^2 t - \mu)^2 &= -\mu^2 + (-\sigma^2 t - \mu)^2 \notag \\
+		\big(x + (-\sigma^2 t - \mu)\big)^2 &= -\mu^2 + (-\sigma^2 t - \mu)^2 \notag \\
+		\big(x + (-\sigma^2 t - \mu)\big)^2 &= -\mu^2 + \sigma^4t^2 + 2\mu\sigma^2 t + \mu^2 \notag \\
+		\big(x + (-\sigma^2 t - \mu)\big)^2 - \sigma^4t^2 - 2\mu\sigma^2 t &= 0 \notag
+	\end{align}
+
+	Réécrivons notre intégrale :
+	\begin{align}
+		\int_{-\infty}^\infty \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2\sigma^2} \Big(\big(x + (-\sigma^2 t - \mu)\big)^2 - \sigma^4t^2 - 2\mu\sigma^2 t\Big)} &= \int_{-\infty}^\infty \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\big(\frac{x - (\sigma^2 t + \mu)}{\sigma}\big)^2} \cdot\ e^{\frac{\sigma^2 t^2}{2} + \mu t}\, dx \notag \\
+		&=  e^{\frac{\sigma^2 t^2}{2} + \mu t} \underbrace{\int_{-\infty}^\infty \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\big(\frac{x - (\sigma^2 t + \mu)}{\sigma}\big)^2}\, dx}_\text{1} \notag
+	\end{align}
+
+	L'intégrale vaut 1 parce que la variable $X$ qui la représente est centré réduite en \(\frac{x - (\sigma^2 t + \mu)}{\sigma}\) et l'air sous de la courbe est la somme des probabilités. Notre moment de force $M_X(t)$ est donc bien \(e^{\frac{\sigma^2 t^2}{2} + \mu t}\). \\
+
+	\textbf{(b)} Utilisez ce résultat pour montrer que si \(X_1,...,X_k\) sont indépendantes avec \(X_i \sim \text{Normale}(\mu_i,\, \sigma^2_i)\), et si \(Y = X_1 + ... + X_k\), alors \(Y \sim \text{Normale}(\mu,\, \sigma^2)\) avec \(\mu = \mu_1 + ... + \mu_k\) et \(\sigma^2_1 + ... + \sigma^2_k\).
+
+	\vspace{-.2cm}
+	\begin{align}
+		M_Y(t) = \mathbb{E}[e^{tY}] &= \mathbb{E}[e^{t(X_1 + ... + X_k)}] \notag \\
+		&\stackrel{ind.}{=} \mathbb{E}[e^{tX_1}] \cdot ... \cdot \mathbb{E}[e^{tX_k}] \notag \\
+		&= \prod^k_{i = 1} \mathbb{E}[e^{tX_i}] = \prod^k_{i = 1} M_{X_i} (t) \notag \\
+		&= \prod^k_{i = 1} e^{\frac{\sigma^2_i t^2}{2} + \mu_i t} \notag \\
+		&= e^{\frac{\sigma^2_1 t^2}{2} + \mu_1 t} + ... + e^{\frac{\sigma^2_k t^2}{2} + \mu_k t} \notag \\
+		&= e^{\frac{t^2}{2}(\sigma^2_1 + ... + \sigma^2_k) + t(\mu_1 + ... + \mu_k)} = \mathbb{E}\big[e^{t(X_1 + ... + X_k)}\big] = M_Y(t) \notag
+	\end{align}
+
+	\textbf{Question 2:} Un médecin doit examiner des p	atients dans un service d'urgence. Supposons que les durées de ces examens sont des variables aléatoires indépendantes qui suivent une loi normale de moyenne $\mu = 12$ minutes avec un écart-tyoe de $\sigma = 3$ minutes.
+
+	\vspace{.2cm}
+	\textbf{(a)} Si le médecin doit examiner 30 patients, quelle est la probabilité que la durée totale des examens dépasse 7 heures ?
+	
+	\vspace{-.35cm}
+	\begin{gather}
+		X : \text{durée des examens} \notag \\
+		X_i \sim N(\mu_i = 12,\, \sigma^2_i = 3^2) \notag \\
+		Y = \sum_{i = 1}^{30} X_i \rightarrow Y \sim N(\mu = 30 \cdot 12 = 360,\, \sigma^2 = 30 \cdot 9 = 270) \notag
+	\end{gather}
+
+	\vspace{-.5cm}
+	\begin{align}
+		\mathbb{P}(Y > 7) &= 1 - \mathbb{P}(Y \le 7) \notag \\
+		&= 1 - \Phi\Big(\frac{y - \mu}{\sigma}\Big) \notag \\
+		&= \Phi\Big(-\frac{7 \cdot 60 - 360}{\sqrt{270}}\Big) \notag \\
+		&= \Phi(-3.65) \notag
+	\end{align}
+
+	\begin{minted}[bgcolor=lightlightgray, fontsize=\footnotesize, linenos]{r}
+  mean <- 360
+  std <- sqrt(270)	
+
+  z_score <- ((7 * 60) - mean) / std
+  y_prob <- 1 - pnorm(z_score)
+		
+  message <- paste("La probabilité que la durée totale des examens dépassent 
+                    7 heures est de ", (round(y_prob, 7) * 100), "%.")
+  print(message)
+	\end{minted}
+	  
+	\VerbatimInput{R/output1.txt}
+
+	\textbf{(b)} Quelle est la probabilité qu'après 2 heures, il aura fini d'examiner au moins 10 patients ?
+
+	\vspace{.2cm}
+	Cette question peut être reformuler comme; Quelle est la probabilité qu'il est examiner 10 patients en moins de 2 heures. Ceci dit, on peut créer une nouvelle variable \(Z \sim N(\mu = 10 \cdot 12 = 120,\, \sigma^2 = 10 \cdot 9 = 90)\) :
+	$$
+	\mathbb{P}(Z \le 2) = \Phi\Big(\frac{z - \mu}{\sigma}\Big) = \Phi\Big(\frac{2 \cdot 60 - 120}{\sqrt{90}}\Big) = \Phi(0) = 0.5 = 50\%
+	$$
+
+	\textbf{(c)} Quelles sont les valeurs en (a) et (b) si l'écart-type est plutôt $\sigma = 5$ minutes ?
+	
+	\vspace{.2cm}
+	On a donc,
+	\begin{gather}
+		Y \sim N(\mu = 360,\, \sigma^2 = 30 \cdot 5^2 = 750) \notag \\
+		Z \sim N(\mu = 120,\, \sigma^2 = 10 \cdot 5^2 = 250) \notag
+	\end{gather}
+
+	Puis,
+		\[(a)\ \mathbb{P}(Y > 7) = \Phi\Big(-\frac{7 \cdot 60 - 360}{\sqrt{750}}\Big) = \Phi(-2.19) \]
+	
+	\begin{minted}[bgcolor=lightlightgray, fontsize=\footnotesize, linenos]{r}
+  mean <- 360
+  std <- sqrt(750)	
+		  
+  z_score <- ((7 * 60) - mean) / std
+  y_prob <- 1 - pnorm(z_score)
+				  
+  message <- paste("La probabilité que la durée totale des examens dépassent 
+                    7 heures est de ", (round(y_prob, 5) * 100), "%.")
+  print(message)
+	\end{minted}
+		
+	\VerbatimInput{R/output2.txt}
+
+	\[(b)\ \mathbb{P}(Y \le 2) = \Phi\Big(\frac{2 \cdot 60 - 120}{\sqrt{250}}\Big) = \Phi(0) = 0.5 = 50\% \]
+
+	On remarque que cela ne change rien pour la valeur en (b) étant donnée que le problème vient du numérateur. \\
+
+	\vspace{.2cm}
+	\textbf{(d)} Quelle sera la valeur en (a) si la durée d'un examen suit plutôt une loi exponentielle avec une moyenne de 12 minutes ? Si vous ne savez pas comment calculer la valeur exacte, vous pouvez au moins donner une approximation basée sur le théorême central limite.
+	
+	\vspace{.2cm}
+	Notre variable aléatoire $Y$ suit une loi Gamma parce que une somme de variables indépendantes suivant tous une loi exponentielle de paramètre $\lambda$ commun. \\
+	
+	Nous avons donc,
+	
+	\vspace{-.5cm}
+	\begin{gather}
+		\mathbb{E}[X_i] = 12 \rightarrow \lambda_i = \frac{1}{12} \notag \\
+		Y \sim Gamma\Big(\alpha = 30,\, \beta = \frac{1}{12}\Big) \notag
+	\end{gather}
+
+	On sait également que si \(\alpha = k \in \mathbb{N}^+\), alors 
+	\[
+	Y \sim Gamma(\alpha,\, \beta) \equiv Y \sim Erlang(k,\, \lambda)\footnote{\href{https://en.wikipedia.org/wiki/Erlang\_distribution\#Cumulative\_distribution\_function\_(CDF)}{Erlang CDF}},\, \text{ où } \lambda = \beta
+	\]
+
+	Donc, avec la fonction de répartition \(F(y) = 1 - \sum^{k - 1}_{n = 0} \frac{1}{n!} e^{-\lambda y} (\lambda y)^n\) :
+	\begin{align}
+		\mathbb{P}(Y > 7) &= 1 - F(7) \notag \\
+		&= 1 - \Biggl(1 - \sum^{29}_{n = 0} \frac{1}{n!} \cdot \Big(e^{-\frac{1}{12} \cdot 7 \cdot 60}\Big) \cdot \Big(\frac{1}{12} \cdot 7 \cdot 60\Big)^n\Biggl) \notag \\ 
+		&= \sum^{29}_{n = 0} \frac{e^{-35} \cdot 35^n}{n!} = \sum^{29}_{i = 0} Z_i,\ Z_i \sim Poisson(\lambda = 35) \notag 
+	\end{align}
+
+	\vspace{.2cm}
+	\noindent Cela nous rend la tâche encore plus facile. Notre probabilité est alors de :
+
+	\begin{minted}[bgcolor=lightlightgray, fontsize=\footnotesize, linenos]{r}
+  lambda <- 35
+  total_prob <- 0
+		
+  for (n in seq(0, 29)) {
+    total_prob <- total_prob + dpois(n, lambda)
+  }
+
+  message <- paste("La probabilité que la durée totale des examens dépassent 
+                    7 heures est de ", (round(total_prob, 5) * 100), "%.")
+  print(message)
+	\end{minted}
+			
+	\VerbatimInput{R/output3.txt}
+
+	\vspace{.3cm}
+	\textbf{{Question 3:}} On a une série 4 de 7 entre les équipes A et B : la première équipe qui a 4 victoires remportent la série (comme dans les séries de la Coupe Stanley au hockey). L'équipe A gagne chaque partie avec probabilités $p$, indépendamment du résultat des autres parties. Quelle est l'espérance du nombre de parties qu'il faut jouer pour déterminer le vainqueur ?
+	
+	\vspace{.3cm}
+	L'équipe qui remportera la série fait face à 4 possibilités. Soit ils gagnent en 4 parties, soit en 5 parties, soit en 6 parties ou soit en 7 parties. Pour chaque possibilité, il y a un certain nombre d'arrangement de comment ces victoires et défaites peuvent se succéder. Les voici :
+
+	\begin{itemize}
+		\item En 4 parties $\rightarrow \binom{3}{0} = \frac{3!}{0!(3 - 0)!} = 1$
+	
+		\vspace{-.1cm}
+		\item En 5 parties $\rightarrow \binom{4}{1} = \frac{4!}{1!(4 - 1)!} = 4$
+		
+		\vspace{-.1cm}
+		\item En 6 parties $\rightarrow \binom{5}{2} = \frac{5!}{2!(5 - 2)!} = 10$
+		
+		\vspace{-.1cm}
+		\item En 7 parties $\rightarrow \binom{6}{3} = \frac{6!}{3!(6 - 3)!} = 20$
+	\end{itemize}
+ 
+	Étant donné que chaque partie est indépendante des précédentes alors la probabilité que l'équipe X (équipe qui remporte) gagne un nombre $n$ de parties (de suite ou non) est de $p^n$ où $n$ est le nombre de victoire. Quant à l'équipe Y (équipe qui perd), 
+	il lui faut $(1 - p)^m$ où $m$ est le nombre de défaites. On sait que l'équipe X doit gagner 4 parties alors $n = 4$ en tout temps. Cependant, le nombre $m$ de défaites dépend du scénario auquel l'équipe X fait face. On a donc les cas suivants :
+	\begin{itemize}
+		\item En 4 parties $m = 0 \rightarrow \underbrace{\big(p^4 \cdot (1 - p)^0\big)}_{A \text{ remporte}} + \underbrace{\big(p^0 \cdot (1 - p)^4\big)}_{B \text{ remporte}}$
+		\item En 5 parties $m = 1 \rightarrow \big(p^4 \cdot (1 - p)^1\big) + \big(p^1 \cdot (1 - p)^4\big)$
+		\item En 6 parties $m = 2 \rightarrow \big(p^4 \cdot (1 - p)^2\big) + \big(p^2 \cdot (1 - p)^4\big)$
+		\item En 7 parties $m = 3 \rightarrow \big(p^4 \cdot (1 - p)^3\big) + \big(p^3 \cdot (1 - p)^4\big)$
+	\end{itemize}
+
+	\noindent Donc,
+	\begin{gather}
+		P(X = 4) = 1 \cdot \Big(\big(p^4 \cdot (1 - p)^0\big) + \big(p^0 \cdot (1 - p)^4\big)\Big) \notag \\
+		P(X = 5) = 4 \cdot \Big(\big(p^4 \cdot (1 - p)^1\big) + \big(p^1 \cdot (1 - p)^4\big)\Big) \notag \\
+		P(X = 6) = 10 \cdot \Big(\big(p^4 \cdot (1 - p)^2\big) + \big(p^2 \cdot (1 - p)^4\big)\Big) \notag \\
+		P(X = 7) = 20 \cdot \Big(\big(p^4 \cdot (1 - p)^3\big) + \big(p^3 \cdot (1 - p)^4\big)\Big) \notag
+	\end{gather}
+
+	\noindent Mettons le tout ensemble :
+	\begin{align} 
+		E[X] &= \sum^7_{i = 4} x_i \cdot P(X = x_i) \notag \\
+		&= 4 \cdot 1 \cdot P(X = 4) + 5 \cdot 4 \cdot P(X = 5) + 6 \cdot 10 \cdot P(X = 6) + 7 \cdot 20 \cdot P(X = 7) \notag
+	\end{align}
+	
+	\vspace{-1cm}
+	\begin{multline}
+		\hspace{.45cm} = 4 \cdot \Big(\big(p^4 \cdot (1 - p)^0\big) + \big(p^0 \cdot (1 - p)^4\big)\Big) \\ + 20 \cdot \Big(\big(p^4 \cdot (1 - p)^1\big) + \big(p^1 \cdot (1 - p)^4\big)\Big) \\ + 60 \cdot \Big(\big(p^4 \cdot (1 - p)^2\big) + \big(p^2 \cdot (1 - p)^4\big)\Big) \\ + 140 \cdot \Big(\big(p^4 \cdot (1 - p)^3\big) + \big(p^3 \cdot (1 - p)^4\big)\Big) \notag
+	\end{multline}
+
+	\vspace{-1cm}
+	\begin{multline}
+		\hspace{.45cm} = 4p^4 + 4(1 - p)^4 \\ + 20p^4 \cdot (1 - p) + 20p \cdot (1 - p)^4 \hspace{1.3cm} \\ + 60p^4 \cdot (1 - p)^2 + 60p^2 \cdot (1 - p)^4 \hspace{.95cm} \\ + 140p^4 \cdot (1 - p)^3 + 140p^3 \cdot (1 - p)^4 \hspace{.8cm} \notag
+	\end{multline}
+
+	\vspace{.3cm}
+	\textbf{Question 4 :} Soient $X$ et $Y$ deux variables aléatoires indépendantes de moyennes $\mu_x$ et $\mu_y$ et de variances $\sigma^2_x$ et $\sigma^2_y$. Donnez (et prouvez) des expressions pour \(\mathbb{E}[XY]\) et \(Var[XY]\). \\
+
+	Nous avons vu en classe que la covariance entre deux variables aléatoires $X$ et $Y$ est définie par 
+	\begin{align}
+		Cov(X,\, Y) &= \mathbb{E}[(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])] \notag \\
+		&= \mathbb{E}[XY] - \mathbb{E}[X] \cdot \mathbb{E}[Y] \notag
+	\end{align}
+
+	Nous avons également vu que si les deux variables sont indépendantes, alors \(Cov(X,\, Y) = 0\).
+
+	\vspace{.2cm}
+	Donc on a,
+	\begin{align}
+		\mathbb{E}[XY] &= \mathbb{E}[X] \cdot \mathbb{E}[Y] \notag \\
+		\mathbb{E}[XY] &= \mu_x \cdot \mu_y \notag
+	\end{align}
+
+	\vspace{.2cm}
+	Quant à la variance, nous allons avoir besoin d'une équation qui décrit le second moment d'une variable aléatoire :
+	\begin{align}
+		Var[X] &= \mathbb{E}[(X - \mathbb{E}[X])^2] \notag \\
+		&= \mathbb{E}[(X - \mu_x)^2] \notag \\
+		&= \mathbb{E}[X^2 - 2\mu_x X + \mu_x^2] \notag \\
+		&= \mathbb{E} - 2\mu_x\mathbb{E}[X] + \mu_x^2 \notag \\
+		&= \mathbb{E}[X^2] - \mu_x^2 \notag
+	\end{align}
+
+	On a donc,
+	\begin{equation}
+		\mathbb{E}[X^2] = Var[X] + \mu_x^2 = \sigma^2_x + \mu_x^2
+	\end{equation}
+
+	\vspace{.3cm}
+	Attaquons-nous désormais à $Var[XY]$ :
+	\begin{align}
+		Var[XY] &= \mathbb{E}[(XY - \mathbb{E}[XY])^2] \notag \\
+		&\stackrel{ind.}{=} \mathbb{E}[(XY - \mathbb{E}[X] \cdot \mathbb{E}[Y])] \notag \\
+		&= \mathbb{E}[(XY - \mu_x \cdot \mu_y)^2] \notag \\
+		&= \mathbb{E}[(XY)^2 - 2\mu_x \mu_y XY + (\mu_x \mu_y)^2] \notag \\
+		&= \mathbb{E}[(XY)^2] - 2\mu_x \mu_y \mathbb{E}[XY] + (\mu_x \mu_y)^2 \notag \\
+		&= \mathbb{E}[X^2 Y^2] - (\mu_x \mu_y)^2 \notag \\
+		&= \mathbb{E}[X^2] \cdot \mathbb{E}[Y^2] - (\mu_x \mu_y)^2 \notag \\
+		&= (\sigma^2_x + \mu_x^2) \cdot (\sigma^2_y + \mu_y^2) - (\mu_x \mu_y)^2,\ \text{avec l'équation \textbf{(1)}} \notag \\
+		&= (\sigma^2_x\sigma^2_y + \sigma^2_x\mu_y^2 + \sigma^2_y\mu_x^2 + \mu_x^2\mu_y^2) - \mu_x^2\mu_y^2 \notag \\
+		&= \sigma^2_x\sigma^2_y + \sigma^2_x\mu_y^2 + \sigma^2_y\mu_x^2 \notag
+	\end{align}
+
+	\newpage
+	\textbf{Question 5:} Des capsules de bière ont un numéro sous la capsule. Il y a $m$ numéros différents et chacun a une probabilité $1/m$ pour chaque bouteille, indépendamment des autres. Soit $X$ le nombre de bouteilles que l'on doit ouvrir pour avoir une collection complète. Donnez une expression pour $\mathbb{E}[X]$ en fonction de $m$. 
+	
+	\vspace{.1cm}
+	Suggestion : Montrez que l'on peut écrire \(X = \sum_{j = 0}^{m - 1} (1 + T_j)\) où $T_0 = 0$ et les autres $T_j$ sont des varaibles aléatoires géométriques indépendantes.
+
+	\vspace{.4cm}
+	\noindent Les variables aléatoires géométriques $T_j,\, j < m,\, j \in \mathbb{N}^+$ représentent :
+	
+	\vspace{-.4cm}
+	\begin{gather}
+		T_j : \text{nombre de bouteilles afin d'obtenir une capsule avec un numéro différent} \notag \\
+		j : \text{nombre de capsules récupérées parmi les } m \notag \\
+		T_j \sim Geo\Big(p_j = \frac{m - j}{m}\Big) \notag
+	\end{gather}
+
+	\vspace{.2cm}
+	Nous débutons l'ouverture de bouteilles. Il nous faut $m$ capsules pour terminer le 'jeu'. Nous ouvrons la première bouteille et nous obtenons une capsule avec un nouveau numéro (étant donnée que c'est la première bouteille ouverte). Notre nombre de bouteilles ouvertes est donc à $j = 1$. 
+	Nous ouvrons notre deuxième bouteille et nous avons de $T_1$ bouteilles afin d'obtenir une capsule distincte de la première. Entre l'ouverture d'une bouteille avec une capsule distincte et d'une bouteille avec une capsule non-distincte, une bouteille est ouverte sans compter $T_j$ bouteilles que nous allons ouvrir.
+
+	\vspace{.3cm}
+	Donc, à chaque 'étape' $T_j$, on doit absolument ouvrir une bouteille pour passer à l'étape $T_{j + 1}$. On effectue ces ouvertures jusqu'à temps que $m$ capsules différentes ont été trouvées ce qui nous donne un nombre $X$ de bouteilles à ouvrir :
+	\[
+	X = \sum^{m - 1}_{j = 0} (1 + T_j)
+	\]
+
+	Donc on a,
+	\[
+	\mathbb{E}[T_j] = \frac{1}{p_j} = \frac{1}{\frac{m - j}{m}} = \frac{m}{m - j} \notag
+	\]
+
+	Puis,
+	\begin{align}
+		\mathbb{E}[X] &= \mathbb{E}\Bigg[\sum^{m - 1}_{j = 0} (1 + T_j)\Bigg] \notag \\
+		&= \sum^{m - 1}_{j = 0} \mathbb{E}[1 +T_j] \notag \\
+		&= \sum^{m - 1}_{j = 0} \Big(1 + \frac{m}{m - j}\Big) \notag \\
+		&= m + m \cdot \sum^{m - 1}_{j = 0} \frac{1}{m - j} \notag \\
+		&= m \cdot \Bigg(1 + \sum^{m - 1}_{j = 0} \frac{1}{m - j}\Bigg) \notag
+	\end{align}
+
+\end{document}

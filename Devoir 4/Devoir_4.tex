@@ -1,0 +1,658 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage[outputdir=build]{minted}
+\usepackage{fancyvrb}
+
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\footnotesize,
+ frame=lines,  
+ framesep=2em, 
+ rulecolor=\color{gray},
+ label=\fbox{\color{black}output},
+ labelposition=topline,
+ commandchars=\|\(\), % escape character and argument delimiters for
+                      % commands within the verbatim
+ commentchar=*        % comment character
+}
+
+\usetikzlibrary{shapes, arrows, positioning}
+
+\title{\textbf{DEVOIR 4}}
+\author{Mathias La Rochelle}
+\date{Le jeudi 10 octobre 2024}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problème 1}
+\textbf{Énoncé}. L'état d'un processus de fabrication change chaque jour 
+selon une chaîne de Markov à deux états, 0 et 1, avec les probabilités de
+transition suivantes :
+\[
+    P_{0,0} = 0.4,\hspace{.3cm} P_{0,1} = 0.6,\hspace{.3cm} P_{1,0} = 0.2,\hspace{.3cm} P_{1,1} = 0.8
+\]
+Chaque jour, un test est fait sur le processus et si la chaîne est dans
+l'état $i$, le test retourne ``bon" avec probabilité $p_i$ et ``mauvais" avec
+probabilité $q_i=1-p_i$, pour $i=0,1$. Vos réponses seront des expressions
+qui dépendent de $p_0$ et $p_1$. On peut noter $X_n$ l'état de la chaîne 
+au jour $n$, puis poser $Y_n=1$ si le test retourn ``bon" au jour $n$, et 
+$Y_n=2$ sinon. \textit{Le vrai état du processus n'est pas observé, 
+seulement $Y_n$ est observé.}
+\vspace{.6cm}
+\hrule
+\vspace{.2cm}
+\subsection*{Partie A}
+\textbf{Énoncé}. Si le processus est dans l'état 0 un jour donné, quelle
+est la probabilité que le test retourne ``bon" le lendemain ?
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+La probabilité que le test retourne ``bon" le lendemain sachant que le 
+processus est à l'état 0 au jour donné signifie qu'on cherche $Y_n=1$ 
+quand $n=1$ soit
+\begin{align}
+    \mathbb{P}[Y_1=1\mid X_0=0]&=\mathbb{P}[Y_1=1\mid X_1=0,\,X_0=0]\cdot\mathbb{P}[X_1=0,\,X_0=0] \notag \\
+    &+\mathbb{P}[Y_1=1\mid X_1=1,\,X_0=0]\cdot\mathbb{P}[X_1=1,\,X_0=0] \notag \\
+    &=p_0\cdot 0.4+p_1\cdot 0.6 \notag \\
+    &=0.4p_0+0.6p_1 \notag 
+\end{align}
+La probabilité que le test retourne ``bon" à ce jour-là est de $0.4p_0+0.6p_1$.
+
+\newpage
+\subsection*{Partie B}
+\textbf{Énoncé}. Si le processus est dans l'état 0 le lundi, quelle est
+la probabilité que le test retourne ``bon" le vendredi suivant ?
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+La probabilité que le test retourne ``bon" le vendredi suivant sachant
+que le processus est à l'état 0 le lundi signifie qu'on cherche $Y_n=1$ 
+quand $n=4$ soit
+\begin{align}
+    \mathbb{P}[Y_4=1\mid X_0=0] &= \mathbb{P}[Y_4=1\mid X_4=0]\cdot\mathbb{P}[X_4=0\mid X_0=0] \notag \\
+    &+ \mathbb{P}[Y_4=1\mid X_4=1]\cdot\mathbb{P}[X_4=1\mid X_0=0]
+\end{align}
+Pour pouvoir trouver de se rendre de l'état 0 à l'état $i$ en $n=4$ étapes, 
+nous allons utiliser l'équation de Chapman-Kolmogorov.
+\[
+    P^{(n)}_{i,j}=\mathbb{P}[X_n=j\mid X_0=i]
+\]
+On a les deux probabilités suivantes
+\begin{gather}
+    P^4_{0,0}=\mathbb{P}[X_4=0\mid X_0=0] \notag \\
+    P^4_{0,1}=\mathbb{P}[X_4=1\mid X_0=0] \notag
+\end{gather}
+qui seront calculées à partir de la matrice $\boldsymbol{P}^4$ :
+\begin{align}
+    \boldsymbol{P}^4&=\boldsymbol{P}^2\times\boldsymbol{P}^2 \notag \\
+    &= \left(\boldsymbol{P}\times\boldsymbol{P}\right)\times\boldsymbol{P}^2 \notag \\
+    &= \left(\begin{pmatrix} 0.4 & 0.6 \\ 0.2 & 0.8 \end{pmatrix}\times\begin{pmatrix} 0.4 & 0.6 \\ 0.2 & 0.8 \end{pmatrix}\right)\times\boldsymbol{P}^2 \notag \\
+    &= \begin{pmatrix} 0.28 & 0.72 \\ 0.24 & 0.76 \end{pmatrix}\times\boldsymbol{P}^2 \notag \\
+    &= \begin{pmatrix} 0.28 & 0.72 \\ 0.24 & 0.76 \end{pmatrix}\times\begin{pmatrix} 0.28 & 0.72 \\ 0.24 & 0.76 \end{pmatrix} \notag \\
+    &= \begin{pmatrix} 0.2512 & 0.7488 \\ 0.2496 & 0.7504 \end{pmatrix} \notag
+\end{align}
+On substitue les probabilités de cette matrice à notre équation (1) :
+\begin{align}
+    \boldsymbol{P}[Y_4=1\mid X_0=0]&=p_0\cdot0.2512+p_1\cdot0.7488 \notag \\
+    &=0.2512p_0+0.7488p_1 \notag
+\end{align}
+La probabilité que le test retourne ``bon" à ce jour-là est de $0.2512p_0+0.7488p_1$.
+
+\newpage
+\subsection*{Partie C}
+\textbf{Énoncé}. Quelle est la proportion des jours où le test retourne
+``bon" à long terme ?
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+Pour trouver cette proportion à long terme, il faut d'abord trouver les 
+probabilités des états stationnaires à long terme. On résoud les équations
+d'équilibre $\boldsymbol{\pi}=\boldsymbol{\pi}\boldsymbol{P}$ et
+$\boldsymbol{\pi}\boldsymbol{1}^t=1$ :
+\begin{align}
+    \pi_0&=0.4\pi_0+0.2\pi_1 \\
+    \pi_1&=0.6\pi_0+0.8\pi_1 \\
+    1&=\pi_0+\pi_1
+\end{align}
+Avec (2) et (4) on a
+\begin{align}
+    \pi_0&=0.4\pi_0+0.2(1-\pi_0) \notag \\
+    0.6\pi_0&=0.2-0.2\pi_0 \notag \\
+    0.8\pi_0&=0.2 \notag 
+\end{align}
+qui donne
+\[
+    \pi_0=\frac{1}{4},\ \pi_1=1-\frac{1}{4}=\frac{3}{4} 
+\]
+
+\vspace{.3cm}
+En conclusion, la proportion des jours où le test retourne ``bon" à long 
+terme dépend de $p_0$ et de $p_1$ et est donnée par l'équation ci-dessous.
+\begin{align}
+    \mathbb{P}[\text{Le test retourne ``bon" à long terme}]&=\pi_0p_0+\pi_1p_1 \notag \\
+    &=0.25p_0+0.75p_1 \notag
+\end{align}
+
+\newpage
+\subsection*{Partie D}
+\textbf{Énoncé}. Est-ce que $\{Y_n,\,n\ge0\}$ est une chaîne de Markov ?
+Si oui, donnez sa matrice de probabilités de transition; sinon expliquez
+pourquoi.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+\noindent \textbf{Clarification} : $Y_n$ est l'état du test au jour $n$, c'est-à-dire qu'au $n$-ième jour, 
+le test peut soit être ``bon" ou `mauvais". \\
+
+\noindent \textbf{Dépendance de} $Y_{n+1}$ : \\
+Le résultat du test $Y_{n+1}$ dépend de l'état du processus $X_{n+1}$ et des 
+probabilités associées à cet état ($p_0$ ou $p_1$). Cependant, le passage de 
+$X_n$ à $X_{n+1}$ est une chaîne de Markov, mais $Y_{n+1}$ ne dépend pas 
+directement de $Y_n$. $Y_n$ est plutôt une observation indirecte qui dépend 
+de l'état ``caché" $X_n$. \\
+
+Puisque $Y_{n+1}$ dépend de l'état caché $X_{n+1}$ et non directement de $Y_n$, 
+la séquence $\{Y_n,\, n \geq 0\}$ ne satisfait pas la propriété markovienne. Elle
+ne constitue donc pas une chaîne de Markov par elle-même. Les transitions dans 
+$\{Y_n\}$ sont influencées par les états cachés $X_n$ ce qui, au final, empêche 
+$\{Y_n\}$ d'être une chaîne de Markov indépendante.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section*{Problème 2}
+\textbf{Énoncé}. Voir mes diapos, pages 52-53.
+\vspace{.6cm}
+\hrule
+\vspace{.2cm}
+\subsection*{Partie A}
+\text{Énoncé}. Dans l'exemple de la marche aléatoire sur $\{0,1,...,N\}$, 
+quand les états 0 et $N$ sont absorbants et les $p_i$ peuvent dépendre de
+$i$, dérivez une formule pour $P_1$ et une formule pour chaque $P_i$ en
+fonction de $P_1$.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+Toute probabilité $P_i$ représente la probabilité de se rendre à $P_N$
+en partant de l'état $i$. De soit, si on tombe dans l'état 0, on ne peut
+aller vers l'état $N$ donc, $P_0=0$. Inversement, si on tombe dans l'état
+$N$, alors on est sûr d'y rester donc, $P_N=1$. Ces cas spéciaux proviennent
+du fait que ces deux états sont absorbants.
+
+\vspace{.3cm}
+Le graphe de la chaîne de Markov qui décrit ce problème est
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[->,>=stealth',shorten >= 2pt, line width=0.5pt, node distance=2cm]
+        \node [circle, draw] (zero) at (0, 0) {0};
+        \path (zero) edge [loop left] node {$1$} (zero);
+        \node [circle, draw] (one) [right of=zero] {1};
+        \path (one) edge [bend left] node [below] {$q_1$} (zero);
+        \node (dots1) [right of=one] {...};
+        \path (one) edge [bend left] node [above] {$p_1$} (dots1);
+        \path (dots1) edge [bend left] node [below] {$q_2$} (one);
+        \node [circle, draw] (i) [right of=dots1] {i};
+        \path (dots1) edge [bend left] node [above] {$p_{i-1}$} (i);
+        \path (i) edge [bend left] node [below] {$q_i$} (dots1);
+        \node (dots2) [right of=i] {...};
+        \path (i) edge [bend left] node [above] {$p_i$} (dots2);
+        \path (dots2) edge [bend left] node [below] {$q_{i+1}$} (i);
+        \node [circle, draw] (n) [right of=dots2] {N};
+        \path (dots2) edge [bend left] node [above] {$p_{n-1}$} (n);
+        \path (n) edge [loop right] node {$1$} (n);
+    \end{tikzpicture}
+    \caption{Marche aléatoire sur $\{0,1,...,N\}$}
+\end{figure}
+
+\noindent On en dérive la formule suivante :
+\[
+    P_i=p_i\cdot P_{i+1}+q_i\cdot P_{i-1},\ \text{où } 0<i<N 
+\]
+qui peut être réecrite comme
+\begin{gather}
+    p_i\cdot P_i+q_i\cdot P_i=p_i\cdot P_{i+1}+q_i\cdot P_{i-1},\ \text{parce que } p_i+q_i=1 \notag \\
+    p\cdot P_i-p_i\cdot P_{i+1}=q_i\cdot P_{i-1}-q_i\cdot P_i \notag \\
+    P_i-P_{i+1}=\frac{q_i}{p_i}\left(P_{i-1}-P_i\right)
+\end{gather}
+On peut désormais utiliser l'équation (5) pour trouver les $P_i,\,i\in\{2,3,...,N-1\}$ 
+en fonction de $P_1$. Avec $i=1$, on a
+\begin{align}
+    P_1-P_2&=\frac{q_1}{p_1}\left(P_0-P_1\right) \notag \\
+    P_1-P_2&=\frac{q_1}{p_1}\left(-P_1\right),\ \text{étant donné que } P_0=0 \notag \\
+    P_2&=P_1\left(1+\frac{q_1}{p_1}\right) \notag
+\end{align}
+Subséquemment, avec $i=2$ on a
+\[
+    P_2-P_3=\frac{q_2}{p_2}(P_1-P_2)=\frac{q_2}{p_2}\left(P_1-P_1\left(1+\frac{q_1}{p_1}\right)\right)=-P_1\frac{q_2\cdot q_1}{p_2\cdot p_1}
+\]
+Puis, avec $i=3$ on a
+\[
+    P_3-P_4=\frac{q_3}{p_3}(P_2-P_3)=-P_1\frac{q_3\cdot q_2\cdot q_1}{p_3\cdot p_2\cdot p_1}
+\]
+En suivant cette suite récurrente, on retrouve la formule pour les $P_i$ :
+\begin{equation}
+    P_i-P_{i+1}=-P_1\cdot \prod_{j=1}^{i}\frac{q_j}{p_j}
+\end{equation}
+Pour simplifier l'équation et trouver celle de $P_1$, on somme les différences :
+\[
+    \sum_{m=1}^{N-1}(P_m-P_{m+1})=(P_1-P_2)+(P_2-P_3)+\dots+(P_{N-1}-P_N)=P_1-P_N
+\]
+\vspace{-.7cm}
+\begin{figure}[h]
+    \begin{align}
+        P_1-P_N&=\sum_{m=1}^{N-1}\left(-P_1\cdot \prod_{j=1}^{m}\frac{q_j}{p_j}\right) \notag \\
+        P_1&=1+\sum_{m=1}^{N-1}\left(-P_1\cdot \prod_{j=1}^{m}\frac{q_j}{p_j}\right),\ \text{avec } P_N=1\ \ ^* \notag \\
+        -1&=\sum_{m=1}^{N-1}\left(\prod_{j=1}^{m}\frac{q_j}{p_j}\right)-\frac{1}{P_1} \notag \\
+        \frac{1}{P_1}&=1+\sum_{m=1}^{N-1}\left(\prod_{j=1}^{m}\frac{q_j}{p_j}\right) \notag \\
+        P_1&=\left[1+\sum_{m=1}^{N-1}\left(\prod_{j=1}^{m}\frac{q_j}{p_j}\right)\right]^{-1}
+    \end{align}
+    \caption{* : parce que une fois dans l'état $N$, on est assuré d'y rester}
+\end{figure}
+
+\noindent On peut faire le même processus pour les $P_i$ :
+\[
+    \sum_{m=1}^{i-1}(P_m-P_{m+1})=(P_1-P_2)+(P_2-P_3)+\dots+(P_{i-1}-P_i)=P_1-P_i
+\]
+Puis,
+\begin{align}
+    P_1-P_i&=\sum_{m=1}^{i-1}\left(-P_1\cdot \prod_{j=1}^{m}\frac{q_j}{p_j}\right) \notag \\
+    P_i&=P_1-\sum_{m=1}^{i-1}\left(-P_1\cdot \prod_{j=1}^{m}\frac{q_j}{p_j}\right) \notag \\
+    P_i&=P_1\left(1+\sum_{m=1}^{i-1}\left(\prod_{j=1}^{m}\frac{q_j}{p_j}\right)\right)
+\end{align}
+
+Les équations (7) et (8) sont les formules respectives des probabilités de se
+finir dans l'état absorbant $N$ en débutant par l'état 1 et l'état $i$.
+
+\newpage
+\subsection*{Partie B}
+\text{Énoncé}. Si $N=5$ et $p_i=(N-i)/N$ pour $0<i<N$, calculez les valeurs des $P_i$.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+Déterminons tout d'abord les $p_i,\, i\in\{1,2,3,4\}$ :
+\begin{gather}
+    p_1=\frac{5-1}{5}=\frac{4}{5},\ \text{avec } i=1 \\
+    p_2=\frac{5-2}{5}=\frac{3}{5},\ \text{avec } i=2 \\
+    p_3=\frac{5-3}{5}=\frac{2}{5},\ \text{avec } i=3 \\
+    p_4=\frac{5-4}{5}=\frac{1}{5},\ \text{avec } i=4
+\end{gather}
+qui nous permettent de calculer les $P_i$ suivants en Python
+\begin{minted}[bgcolor=lightgray, fontsize=\footnotesize, linenos]{python}
+N = 5
+probabilites = [(N - i) / N for i in range(1, N)]
+
+somme_int = 0
+for m in range(1, N): # s'arrête à N - 1
+    produit_int = 1
+    for j in range(1, m + 1): # s'arrête à m
+        produit_int *= (1 - probabilites[j - 1]) / probabilites[j - 1]
+
+    somme_int += produit_int
+
+P_1 = 1 / (1 + somme_int)
+print("La probabilité de se rendre à l'état N en débutant de l'état 1 est de "
+       + (round(P_1, 3) * 100) + "%.")
+
+for i in range(2, N):
+    somme_int = 0
+    for m in range(1, i): # s'arrête à i - 1
+        produit_int = 1
+        for j in range(1, m + 1):
+            produit_int *= (1 - probabilites[j - 1]) / probabilites[j - 1]
+
+        somme_int += produit_int
+
+    P_i = P_1 * (1 + somme_int)
+    print("La probabilité de se rendre à l'état N en débutant de l'état " + i 
+           + " est de " + (round(P_i, 3) * 100) + "%.")
+\end{minted}
+
+\VerbatimInput{output.txt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section*{Problème 3}
+\textbf{Énoncé}. Soit $a$ et $b$ deux entiers positifs et considérons une chaîne de 
+Markov $\{\mathbf{X}_n,\,n\ge0\}$ dont l'espace d'états est 
+$\{(x,y):x\in\{0,...,a-1\},\,y\in\{0,...,b-1\}\}$, et les probabilités de transition 
+sont définies comme suit. Si $\mathbf{X}_n=(x,y)$, alors 
+$\mathbf{X}_{n+1}=((x+1)\hspace{-.1cm}\mod{a},y)$ ou 
+$\mathbf{X}_{n+1}=(x,(y+1)\hspace{-.1cm}\mod{b})$ chacun avec probabilité 1/2.
+\vspace{.6cm}
+\hrule
+\vspace{.2cm}
+\subsection*{Partie A}
+\textbf{Énoncé}. Montrez que cette chaîne est irréductible.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+Pour montrer que la chaîne de Markov décrite est irréductible, nous devons prouver 
+que tout état dans l'espace d'états $\{(x,y):x\in\{0,\dots,a-1\},\,y\in\{0,\dots,b-1\}\}$ 
+peut être atteint à partir de n'importe quel autre état, en un certain nombre d'étapes. \\
+
+Les états de cette chaîne sont de la forme $(x, y)$, où $x$ varie de $0$ à $a-1$ et $y$ de $0$ à $b-1$. Les transitions possibles sont :
+\begin{itemize}
+    \item De $(x, y)$ à $((x+1)\hspace{-.1cm}\mod a, y)$ avec probabilité $1/2$
+    \item De $(x, y)$ à $(x, (y+1)\hspace{-.1cm}\mod b)$ avec probabilité $1/2$
+\end{itemize}
+
+Ces transitions signifient qu'à chaque étape, soit la première composante $x$ 
+est incrémentée de $1\hspace{-.1cm}\mod a$, soit la deuxième composante $y$ est incrémentée 
+de $1\hspace{-.1cm}\mod b$ et ce, avec probabilité égale. \\
+
+Désormais, supposons que nous partions d'un état $(x,y)$ et que nous souhaitions 
+atteindre un autre état $(x^\prime,y^\prime)$. 
+\begin{itemize}
+    \item Pour la première composante $x$, en appliquant la transition 
+    $x \to (x+1)\mod a$ de façon répétée, nous pouvons passer à n'importe quelle 
+    autre valeur de $x$ en au plus $a$ étapes, car le compteur $x$ se comporte 
+    comme une roue cyclique avec $a$ positions.
+    \item De manière similaire, pour la deuxième composante $y$, en appliquant la 
+    transition $y \to (y+1)\mod b$, nous pouvons atteindre n'importe quelle autre 
+    valeur de $y$ en au plus $b$ étapes, puisque $y$ se comporte comme une roue 
+    cyclique avec $b$ positions.
+\end{itemize}
+Ainsi, il est toujours possible de trouver un chemin dans l'espace d'états de 
+$(x,y)$ à $(x^\prime,y^\prime)$ en combinant ces transitions. Cela implique qu'il 
+existe un nombre fini d'étapes pour aller de n'importe quel état à n'importe 
+quel autre. \\
+
+Finalement, étant donné que tous les états communiquent entre eux, cela signifie 
+que tous les états appartiennent à la même classe de communication. Cette classe est
+\[
+    C = \{(x,y):x\in\{0,\dots,a-1\},\,y\in\{0,\dots,b-1\}\}
+\]
+Donc, la chaîne de Markov est irréductible.
+
+\newpage
+\subsection*{Partie B}
+\text{Énoncé}. Montrez qu'elle est apériodique si et seulement si pgcd$(a,b)=1$.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+Une chaîne de Markov est dite apériodique si tous les états accessibles sont
+apériodiques. Un état $i$ est apériodique si et seulement si sa période $d(i)=1$. \\
+
+\noindent Les transitions dans cette chaîne suivent deux cycles indépendants : un cycle 
+de longueur \(a\) pour la composante \(x\), et un cycle de longueur \(b\) pour la composante 
+\(y\). Quand \( \text{pgcd}(a, b) = 1 \), cela signifie qu'il n'existe pas de synchronisation 
+stricte entre les cycles des deux composantes. Inversement, lorsque \( \text{pgcd}(a, b) > 1 \), 
+les deux cycles \(a\) et \(b\) partagent un diviseur commun qui crée une synchronisation 
+des transitions. Ainsi, les états de la chaîne se répètent périodiquement à des intervalles 
+fixes.
+
+
+\subsubsection*{Exemple 1}
+Dans le cas où $a=1$ et $b=2$, on a l'espace d'états $\{\{x,y\}:x=0,\ y\in\{0,1\}\}$
+et pgcd$(a,b)=1$. Les transitions entre les états de l'étape $n$ à $n+1$ sont :
+\begin{itemize}
+    \item $(x_n=0,\,y_n=0)\to(x_{n+1}=1\hspace{-.1cm}\mod 1,\,y_{n+1}=0)=(x_{n+1}=0,\,y_{n+1}=0)$
+    \item $(x_n=0,\,y_n=0)\to(x_{n+1}=0,\,y_{n+1}=1\hspace{-.1cm}\mod 2)=(x_{n+1}=0,\,y_{n+1}=1)$
+    \item $(x_n=0,\,y_n=1)\to(x_{n+1}=1\hspace{-.1cm}\mod 1,\,y_{n+1}=1)=(x_{n+1}=0,\,y_{n+1}=1)$
+    \item $(x_n=0,\,y_n=1)\to(x_{n+1}=0,\,y_{n+1}=2\hspace{-.1cm}\mod 2)=(x_{n+1}=0,\,y_{n+1}=0)$
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[->,>=stealth',shorten >= 2pt, line width=0.5pt, node distance=2cm]
+        \node [circle, draw] (zero-zero) at (0, 0) {(0,0)};
+        \node [circle, draw] (zero-one) at (3,0) {(0,1)};
+        \path (zero-zero) edge [bend left] (zero-one);
+        \path (zero-one) edge [bend left] (zero-zero);
+        \path (zero-zero) edge [loop left] (zero-zero);
+        \path (zero-one) edge [loop right] (zero-one);
+    \end{tikzpicture}
+    \caption{Diagramme des transitions entre les états (sans les probabilités)}
+\end{figure}
+
+On remarque qu'un cycle dans cette chaîne n'a pas besoin de suivre une certaine 
+période fixe : chaque état est accessible à partir de lui-même en une étape (boucle), 
+ou bien par alternance entre deux états $(0,0)$ et $(0,1)$. Comme la période des 
+transitions entre ces états est $1$, cela montre que la chaîne est apériodique.
+
+\subsubsection*{Exemple 2}
+Dans le cas où $a=b=2$, on a l'espace d'états $\{\{x,y\}:x\in\{0,1\},\ y\in\{0,1\}\}$
+et pgcd$(a,b)=2$. Les transitions entre les états de l'étape $n$ à $n+1$ sont :
+\begin{itemize}
+    \item $(x_n=0,\,y_n=0)\to(x_{n+1}=1\hspace{-.1cm}\mod 2,\,y_{n+1}=0)=(x_{n+1}=1,\,y_{n+1}=0)$
+    \item $(x_n=0,\,y_n=0)\to(x_{n+1}=0,\,y_{n+1}=1\hspace{-.1cm}\mod 2)=(x_{n+1}=0,\,y_{n+1}=1)$
+    \item $(x_n=1,\,y_n=0)\to(x_{n+1}=2\hspace{-.1cm}\mod 2,\,y_{n+1}=0)=(x_{n+1}=0,\,y_{n+1}=0)$
+    \item $(x_n=1,\,y_n=0)\to(x_{n+1}=1,\,y_{n+1}=2\hspace{-.1cm}\mod 2)=(x_{n+1}=1,\,y_{n+1}=1)$
+    \item $(x_n=0,\,y_n=1)\to(x_{n+1}=1,\,y_{n+1}=1)$ par symétrie
+    \item $(x_n=0,\,y_n=1)\to(x_{n+1}=0,\,y_{n+1}=0)$ par symétrie
+    \item $(x_n=1,\,y_n=1)\to(x_{n+1}=0,\,y_{n+1}=1)$ par symétrie
+    \item $(x_n=1,\,y_n=1)\to(x_{n+1}=1,\,y_{n+1}=0)$ par symétrie
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[->,>=stealth',shorten >= 2pt, line width=0.5pt, node distance=2cm]
+        \node [circle, draw] (zero-zero) at (0, 2) {(0,0)};
+        \node [circle, draw] (zero-one) at (0, 0) {(0,1)};
+        \node [circle, draw] (one-zero) at (2, 2) {(1,0)};
+        \node [circle, draw] (one-one) at (2, 0) {(1,1)};
+        \path (zero-zero) edge [bend right] (zero-one);
+        \path (zero-one) edge [bend right] (zero-zero);
+        \path (zero-zero) edge [bend left] (one-zero);
+        \path (one-zero) edge [bend left] (zero-zero);
+        \path (one-zero) edge [bend left] (one-one);
+        \path (one-one) edge [bend left] (one-zero);
+        \path (zero-one) edge [bend right] (one-one);
+        \path (one-one) edge [bend right] (zero-one);
+    \end{tikzpicture}
+    \caption{Diagramme des transitions entre les états (sans les probabilités)}
+\end{figure}
+
+Les transitions possibles entre les états $(x,y)$ permettent une alternance systématique 
+entre les quatre états. Chaque état est atteint après un nombre d'étapes fixe, ce qui caractérise 
+une chaîne périodique. Ils forment un cycle, et en raison du fait que les périodes pour chaque 
+composante sont égales à 2, la chaîne est périodique avec une période $d(i)=2$. Chaque état 
+$(x,y)$ peut retourner à lui-même ou aux autres états après un nombre d'étapes multiple de 2, 
+ce qui rend cette chaîne non apériodique. \\
+
+\noindent On conclut qu'une chaîne de Markov irréductible est apériodique si et seulement si 
+pgcd$(a,b)=1$. Dans ce cas, les cycles des deux composantes $x$ et $y$ ne se synchronisent pas, 
+et chaque état peut être atteint à des étapes non multiples d'une période fixe. Lorsque
+pgcd$(a,b)>1$, les deux cycles se synchronisent, entraînant une périodicité commune à tous 
+les états, rendant la chaîne périodique.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section*{Problème 4}
+\textbf{Énoncé}. On considère une suite de polygones convexes définis comme suit. 
+À l'étape $n$, on a un polygone de $X_n+3$ côtés, pour $X_n\ge0$. Par exemple,
+pour un triangle on a $X_n=0$ et pour un hexagone on a $X_n=3$. On choisit au hasard 
+(uniformément) deux des $X_n+3$ côtés (faces) de ce polygone et on rejoint les points
+milieux de ces deux faces par un segment de droite. Cela divise le polygone courant
+en deux polygones convexes plus petits, $P_1$ et $P_2$. On suppose que le polygone 
+initial n'a pas deux faces successives parfaitement alignées. Puisque c'est seulement
+le nombre de faces qui compte, on peut se faire une image de la situation en supposant
+que le polygone est régulier, à chaque étape. On choisit un des deux polygones $P_1$
+ou $P_2$ au hasard, avec probabilité 1/2 chacun. et c'est le prochain polygone, dont
+le nombre de faces est $X_{n+1}+3$.
+
+\vspace{.3cm}
+\noindent Par exemple, si on a un pentagone et qu'on choisit deux faces adjacents, 
+il sera divisé en un triangle et un hexagone. Si on choisit deux faces non adjacentes, 
+les deux sous-polygones obtenus auront 4 et 5 faces. Suggestion : faites-vous un 
+dessin, énumérez tous les choix possibles, et calculez la probabilité de chaque choix.
+\vspace{.6cm}
+\hrule
+\vspace{.2cm}
+\subsection*{Partie A}
+\textbf{Énoncé}. Montrez que $\{X_n,\,n\ge0\}$ est une chaîne de Markov irréductible.
+Dites quel est son espace d'états et trouvez la matrice des probabilités de transition.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+L’espace d’états de la chaîne de Markov \(\{X_n,\,n\geq0\}\) est l’ensemble des nombres naturels \(\mathbb{N} = \{0, 1, 2, \dots\}\). Chaque état \(X_n = i\) représente le nombre de côtés supplémentaires par rapport au triangle initial, autrement dit, l'état \(i\) correspond à un polygone ayant \(i + 3\) côtés. Par exemple :
+\begin{itemize}
+    \item \(X_n = 0\) correspond à un polygone à 3 côtés (un triangle),
+    \item \(X_n = 1\) correspond à un polygone à 4 côtés (un quadrilatère),
+    \item \(X_n = 2\) correspond à un polygone à 5 côtés (un pentagone), et ainsi de suite.
+\end{itemize}
+
+On a donc l’espace d’états $E$ de la chaîne de Markov suivante :
+\[
+    E = \{0, 1, 2, 3, \dots\}
+\]
+
+Pour la suite des choses, afin de mieux comprendre notre chaîne de Markov, nous écrivons 
+le processus $Y_n$ comme étant le nombre de côtés que possède un polygone à l'étape $n$ 
+soit $Y_n=X_n+3$.
+
+\newpage
+\begin{figure}[h]
+    \centering
+    \resizebox{0.6\textwidth}{!}{\input{polygones.tex}}
+    \caption{Différentes manières de découper les polygones $Y_n=3,4,5$}
+\end{figure}
+
+\noindent Un triangle peut donner un triangle ou un quadrilatère avec probabilité
+\[
+    \mathbb{P}[Y_{n+1}=3\mid Y_n=3]=\mathbb{P}[Y_{n+1}=4\mid Y_n=3]=\frac{1}{2}
+\]
+De même, un quadrilatère peut donner un triangle, un quadrilatère ou un pentagone avec 
+probabilité
+\[
+    \mathbb{P}[Y_{n+1}=3\mid Y_n=4]=\mathbb{P}[Y_{n+1}=4\mid Y_n=4]=\mathbb{P}[Y_{n+1}=5\mid Y_n=4]=\frac{1}{3}
+\]
+Par suite logique, on remarque que la probabilité dépend de l'état dans lequel nous 
+sommes (donc dépend du nombre de côtés du polygone actuel) :
+\[
+    p_{i,j}=\mathbb{P}[X_{n+1}=j\mid X_n=i]=\frac{1}{i+2}
+\]
+Grâce à cette formule, on peut déduire à quoi va ressembler notre matrice de transitions.
+À chaque fois que le polygone $i$ choisit augmente d'un côté de plus que son polygone
+antécédent, il peut atteindre le dernier polygone et tous ceux qui l'ont antécéder avec
+probabilité $1/(i+2)$.
+\[
+    \boldsymbol{P}=\left(
+        \begingroup
+        \renewcommand{\arraystretch}{1.3}
+        \setlength{\arraycolsep}{3pt}
+        \small
+        \begin{array}{*{6}{c}}
+        p_{0,0} & p_{0,1} & 0 & 0 & \cdots & 0 \\
+        p_{1,0} & p_{1,1} & p_{1,2} & 0 & \cdots & 0 \\
+        \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+        p_{n,0} & p_{n,1} & p_{n,2} & p_{n,3} &  \cdots & p_{n,n}
+    \end{array}
+    \endgroup
+    \right)
+    =
+    \left(
+        \begingroup
+        \renewcommand{\arraystretch}{1.3}
+        \setlength{\arraycolsep}{2pt}
+        \small
+        \begin{array}{*{7}{c}}
+        \frac{1}{2} & \frac{1}{2} & 0 & 0 & \cdots & 0 & 0 \\
+        \frac{1}{3} & \frac{1}{3} & \frac{1}{3} & 0 & \cdots & 0 & 0 \\
+        \vdots & \vdots & \vdots & \ddots & \cdots & \vdots & \vdots \\
+        \frac{1}{i+2} & \frac{1}{i+2} & \frac{1}{i+2} & \frac{1}{i+2} & \frac{1}{i+2} & 0 & 0 \\
+        \vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+        \frac{1}{n+2} & \frac{1}{n+2} & \frac{1}{n+2} & \frac{1}{n+2} & \frac{1}{n+2} & \cdots & \frac{1}{n+2}
+    \end{array}
+    \endgroup
+    \right)
+\]
+Notre chaîne de Markov $\{X_n,\,n\ge 0\}$ est donc irréductible parce qu'on peut partir de
+n'importe quel état et se rendre à tout autre état (polygone) en $j-i$ étapes lorsqu'on part
+de $i$ et on se rend à $j$ (avec $i<j$) et en 1 étape si on part de $j$ et on se rend à $i$ 
+(encore où $i<j$).
+
+\newpage
+\subsection*{Partie B}
+\textbf{Énoncé}. Montrez que les probabilités d'état stationnaire de cette chaîne sont
+données par l'équation étonnamment élégante suivante : $\pi_i=1/(i!\cdot e)$ pour 
+$i\ge0$, où $e=2.71828...$ est la constante d'Euler.
+\vspace{.2cm}
+\hrule
+\vspace{.4cm}
+Pour notre chaîne de Markov irréductible positive, les états stationnaires $\pi_i$ forment 
+les équations d'équilibre
+\begin{gather}
+    \pi_j=\sum_{i\in\mathbb{N}}\pi_i\cdot p_{i,j},\,\forall j\in\mathbb{N} \\
+    \sum_{i\in\mathbb{N}} \pi_i=1
+\end{gather}
+On peut donc retrouver l'équation de $\pi_0$ et ceux de $\pi_j$ avec
+\[
+    \pi_0=\sum_{i=0}^{\infty}\frac{\pi_i}{i+2}\ \text{et}\ \pi_j=\sum_{i=j-1}^{\infty}\frac{\pi_i}{i+2}
+\]
+Donc pour $j=1$ on retrouve
+\[
+    \pi_1=\sum_{i=0}^{\infty}\frac{\pi_i}{i+2}=\frac{\pi_0}{2}+\pi_2
+\]
+Nous remarquons également que 
+\[
+\pi_0=\sum_{i=0}^{\infty}\frac{\pi_i}{i+2}=\pi_1
+\]
+Nous allons maintenant examiner le cas $j=2$ :
+\[
+    \pi_2=\sum_{i=1}^{\infty}\frac{\pi_i}{i+2}=\frac{\pi_1}{3}+\sum_{i=2}^{\infty}\frac{\pi_i}{i+2}=\frac{\pi_1}{3}+\pi_3
+\]
+Ensuite, pour $j=3$ nous avons :
+\[
+    \pi_3=\sum_{i=2}^{\infty}\frac{\pi_i}{i+2}=\frac{\pi_2}{4}+\sum_{i=3}^{\infty}\frac{\pi_i}{i+2}=\frac{\pi_2}{4}+\pi_4
+\]
+À partir de ces relations, nous pouvons exprimer les états stationnaires $\pi_i$ en 
+fonction de $\pi_0$ :
+\begin{gather}
+    \pi_2=\pi_1-\frac{\pi_0}{2}=\pi_0-\frac{\pi_0}{2}=\frac{\pi_0}{2} \notag \\
+    \pi_3=\pi_2-\frac{\pi_1}{3}=\frac{\pi_0}{2}-\frac{\pi_0}{3}=\frac{\pi_0}{6} \notag \\
+    \pi_4=\pi_3-\frac{\pi_2}{4}=\frac{\pi_0}{6}-\frac{\pi_0}{8}=\frac{\pi_0}{24} \notag
+\end{gather}
+Nous constatons ainsi une séquence logique où la probabilité stationnaire dépend de 
+l'état considéré. Nous obtenons donc pour l'état stationnaire $j$ :
+\begin{equation}
+    \pi_j=\frac{\pi_0}{j!}
+\end{equation}
+Pour démontrer que cette équation est valide $\forall\, j$, nous allons démontrer qu'elle
+est vraie pour $j+1$ en utilisant l'équation (13) utilisée plutôt pour trouver $\pi_1,\,\pi_2,\,etc$ :
+\begin{align}
+    \pi_j&=\frac{\pi_{j-1}}{j+1}+\pi_{j+1} \notag \\
+    \pi_{j+1}&=\pi_j-\frac{\pi_{j-1}}{j+1} \notag \\
+    &=\frac{\pi_0}{j!}-\frac{\pi_0}{(j-1)!\cdot (j+1)} \notag \\
+    &=\frac{\pi_0}{(j-1)!}\left(\frac{1}{j}-\frac{1}{j+1}\right) \notag \\
+    &=\frac{\pi_0}{(j-1)!}\left(\frac{(j+1)-j}{j(j+1)}\right) \notag \\
+    &=\frac{\pi_0}{(j+1)\cdot (j)\cdot (j-1)!}=\frac{\pi_0}{(j+1)!}
+\end{align}
+Nous avons démontré que pour tout état $j$, les probabilités stationnaires peuvent s'exprimer 
+sous la forme $\pi_j=\frac{\pi_0}{j!}$. Pour déterminer $\pi_0$, nous n'avons qu'à sommer sur les $\pi_j$ :
+\[
+    \sum_{\forall j}\pi_j=\pi_0\cdot\sum_{\forall j}\frac{1}{j!}
+\]
+On remarque qu'on a une série de Taylor de $e^x=\sum_{n=0}^{\infty}\frac{x^n}{n!}$ où 
+$x=1$ dans le côté droit de l'égalité. Donc,
+\[
+    \sum_{\forall j}\pi_j=\pi_0\cdot e
+\]
+Nous avons démontré à la partie A que notre chaîne de Markov est irréductible. Cela 
+signifie qu'il est possible de passer d'un état \( j \) à un autre état \( j+1 \) ou 
+\( j-1 \), ce qui garantit une connexion entre tous les états de la chaîne (\( j-1 \leftrightarrow j \leftrightarrow j+1 \)). 
+Le temps moyen de retour à l'état \( i \) est donc fini pour tous les états, 
+ce qui renforce l'affirmation que la chaîne est récurrente positive. Nous savons également que lorsque la chaîne est récurrente positive, la somme des 
+probabilités limites est égale à 1 :
+\begin{gather}
+    \pi_j=\lim_{n\to\infty}P_{i,j}^{(n)} \\
+    \sum_{\forall j}\pi_j=\sum_{\forall j}\lim_{n\to\infty}P_{i,j}^{(n)}=1 \notag
+\end{gather}
+Donc nous avons
+\[
+    \sum_{\forall j}\pi_j=1=\pi_0\cdot e\to \pi_0=\frac{1}{e}
+\]
+La formule finale d'un état stationnaire $j$ est caractérisée par
+\begin{equation}
+    \pi_j=\frac{\pi_0}{j!}=\frac{1}{j!\cdot e},\, \forall\, j
+\end{equation}
+
+
+\end{document}
+
