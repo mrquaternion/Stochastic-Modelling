@@ -1,0 +1,5 @@
+Entrez la moyenne de votre distribution de Poisson :
+-1
+Entrez votre probabilité entre 0 et 1 :
+1
+Les valeurs entrées ne respectent pas les conditions limites.

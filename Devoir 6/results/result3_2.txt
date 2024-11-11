@@ -1,0 +1,4 @@
+Entrez votre probabilité entre 0 et 1 :
+1.1
+Exception in thread "main" java.lang.IllegalArgumentException
+	at mesdevoirs.IndexSearch.main(IndexSearch.java:29)

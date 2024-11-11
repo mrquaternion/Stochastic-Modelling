@@ -1,0 +1,5 @@
+Entrez la moyenne de votre distribution de Poisson :
+25
+Entrez votre probabilité entre 0 et 1 :
+0.8
+La valeur X obtenue est de 29

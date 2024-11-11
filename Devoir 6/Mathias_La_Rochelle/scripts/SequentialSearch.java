@@ -44,10 +44,6 @@ public class SequentialSearch {
 	}
 	
 	static int inversePoissonCDF(double lambda, double U) {
-		if (lambda <= 0 || U <= 0 || U >= 1) {
-            throw new IllegalArgumentException();
-        }
-
         int X = 0;
         double cumulativeProbability = PoissonDist.cdf(lambda, X);
 

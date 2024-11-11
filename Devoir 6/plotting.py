@@ -1,10 +1,6 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
-X1 = []
-Y1 = []
-X2 = []
-Y2 = []
+X1, Y1, X2, Y2 = [], [], [], []
 with open('./Devoir 6/output1.txt') as file:
     for line in file:
         line_pieces = line.strip().split(",") 

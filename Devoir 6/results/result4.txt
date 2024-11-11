@@ -1,0 +1,7 @@
+Méthode 1 :
+Temps d'exécution : 700 ms
+Nombre total des fréquences : 999996
+
+Méthode 2 :
+Temps d'exécution : 61 ms
+Nombre total des fréquences : 1000001
